@@ -15,6 +15,7 @@ class ConnectionViewModel {
     var isValidating: Bool = false
     var isValid: Bool?
     var errorMessage: String?
+    var bonjourBrowser = BonjourBrowser()
 
     // MARK: - Computed Properties
 
@@ -28,6 +29,24 @@ class ConnectionViewModel {
     var canValidate: Bool {
         !host.trimmingCharacters(in: .whitespaces).isEmpty
             && !port.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    // MARK: - Discovery
+
+    /// Starts browsing for KarnEvil9 servers on the local network.
+    func startDiscovery() {
+        bonjourBrowser.startBrowsing()
+    }
+
+    /// Stops browsing for servers.
+    func stopDiscovery() {
+        bonjourBrowser.stopBrowsing()
+    }
+
+    /// Auto-fills host and port from a discovered server.
+    func selectServer(_ server: DiscoveredServer) {
+        host = server.host
+        port = "\(server.port)"
     }
 
     // MARK: - Actions
@@ -64,6 +83,7 @@ class ConnectionViewModel {
             config.save()
             isValid = true
             errorMessage = nil
+            stopDiscovery()
         } catch {
             isValid = false
             errorMessage = error.localizedDescription

@@ -1,6 +1,6 @@
 name: Tarkus
 options:
-  bundleIdPrefix: com.oldeucryptoboi
+  bundleIdPrefix: com.artivisual
   deploymentTarget:
     iOS: "17.0"
   xcodeVersion: "16.0"
@@ -12,7 +12,7 @@ settings:
     SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1"
     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: "ZS56LL5S52"
 
 targets:
   Tarkus:
@@ -22,10 +22,11 @@ targets:
       - path: Tarkus
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.oldeucryptoboi.Tarkus
+        PRODUCT_BUNDLE_IDENTIFIER: com.artivisual.Tarkus
         INFOPLIST_FILE: Tarkus/Info.plist
         GENERATE_INFOPLIST_FILE: false
         DEVELOPMENT_ASSET_PATHS: "\"Tarkus/Preview Content\""
+        CODE_SIGN_STYLE: Automatic
     scheme:
       testTargets:
         - TarkusTests
@@ -39,7 +40,7 @@ targets:
       - target: Tarkus
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.oldeucryptoboi.TarkusTests
+        PRODUCT_BUNDLE_IDENTIFIER: com.artivisual.TarkusTests
         GENERATE_INFOPLIST_FILE: true
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Tarkus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tarkus"
         BUNDLE_LOADER: "$(TEST_HOST)"

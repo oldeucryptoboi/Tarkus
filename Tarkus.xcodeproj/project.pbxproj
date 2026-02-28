@@ -12,6 +12,7 @@
 		223F1C036960462C368978AB /* KarnEvil9Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01E0BE10FE627DCF5A684A5 /* KarnEvil9Client.swift */; };
 		22437E5902F4435CF54F2A4E /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB35B3780AF04DFAEA27F62C /* Session.swift */; };
 		2F36B78AC1102F21EAABC964 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9B5EB21836BAB9054BC534 /* PreviewData.swift */; };
+		343DD3359DF84E4644F4FB7C /* BonjourBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D601D15F1A980C16F2E33E7 /* BonjourBrowser.swift */; };
 		3E3F6FD6953F5D1E5F325F6D /* ApprovalDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58029486C0E151D3A789CA50 /* ApprovalDetailView.swift */; };
 		3F33381D116B556B1D9C2D81 /* Approval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF77AE7CC3D382321520BD1 /* Approval.swift */; };
 		4273DD770F669894EBAB3CE5 /* SSEClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C2C3AF82652810E8FE6532 /* SSEClient.swift */; };
@@ -62,6 +63,7 @@
 		035CCEE7B32CA429FFBB9F08 /* SessionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionHeaderView.swift; sourceTree = "<group>"; };
 		07D15EE56524EED6B6A37764 /* MetricsBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsBarView.swift; sourceTree = "<group>"; };
 		134442F18EC7289E8F1CC7D9 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		1D601D15F1A980C16F2E33E7 /* BonjourBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourBrowser.swift; sourceTree = "<group>"; };
 		22E3352B0DDDB36CD67D4366 /* ApprovalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalsViewModel.swift; sourceTree = "<group>"; };
 		2C48D185A9311A7E733F1B73 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		3F7829AC92F774CEDE91B521 /* Tarkus.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tarkus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -266,6 +268,7 @@
 		CA4F12502F7CAAE591E52EE9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				1D601D15F1A980C16F2E33E7 /* BonjourBrowser.swift */,
 				134442F18EC7289E8F1CC7D9 /* KeychainService.swift */,
 				2C48D185A9311A7E733F1B73 /* NotificationService.swift */,
 			);
@@ -321,10 +324,11 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					18EB0575B470DBCCD384605D = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = ZS56LL5S52;
 					};
 					B2557AB4708B3319E926F6F6 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = ZS56LL5S52;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -373,6 +377,7 @@
 				3E3F6FD6953F5D1E5F325F6D /* ApprovalDetailView.swift in Sources */,
 				E8F744801351997FCAED8B21 /* ApprovalsListView.swift in Sources */,
 				F4424DA487E4DBE873BFDF4A /* ApprovalsViewModel.swift in Sources */,
+				343DD3359DF84E4644F4FB7C /* BonjourBrowser.swift in Sources */,
 				8C5CD449EC69A8B2FAFF4227 /* ConnectionSetupView.swift in Sources */,
 				F3AB91E6D04658589F98A9D3 /* ConnectionViewModel.swift in Sources */,
 				CF596B64C5FA29A3A359EBD2 /* DashboardView.swift in Sources */,
@@ -428,6 +433,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Tarkus/Preview Content\"";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Tarkus/Info.plist;
@@ -435,7 +441,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.Tarkus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.artivisual.Tarkus;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -446,6 +452,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Tarkus/Preview Content\"";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Tarkus/Info.plist;
@@ -453,7 +460,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.Tarkus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.artivisual.Tarkus;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -469,7 +476,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.TarkusTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.artivisual.TarkusTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tarkus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tarkus";
@@ -512,7 +519,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = ZS56LL5S52;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -545,7 +552,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.TarkusTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.artivisual.TarkusTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tarkus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tarkus";
@@ -588,7 +595,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = ZS56LL5S52;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

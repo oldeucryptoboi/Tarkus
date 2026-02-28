@@ -33,6 +33,42 @@ struct ConnectionSetupView: View {
                     .listRowBackground(Color.clear)
                 }
 
+                // Discovered servers
+                if !viewModel.bonjourBrowser.servers.isEmpty {
+                    Section("Discovered Servers") {
+                        ForEach(viewModel.bonjourBrowser.servers) { server in
+                            Button {
+                                viewModel.selectServer(server)
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(server.name)
+                                            .font(.body)
+                                            .foregroundStyle(.primary)
+                                        Text("\(server.host):\(server.port)")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if viewModel.host == server.host
+                                        && viewModel.port == "\(server.port)" {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(Color.accentColor)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if viewModel.bonjourBrowser.isSearching {
+                    Section("Discovered Servers") {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                            Text("Scanning for servers...")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
                 // Connection fields
                 Section("Server") {
                     TextField("Host (e.g. 192.168.1.50)", text: $viewModel.host)
@@ -41,7 +77,7 @@ struct ConnectionSetupView: View {
                         .textInputAutocapitalization(.never)
 
                     TextField("Port", text: $viewModel.port)
-                        .keyboardType(.numberPad)
+                        .keyboardType(.asciiCapableNumberPad)
                 }
 
                 Section {
@@ -104,6 +140,9 @@ struct ConnectionSetupView: View {
             }
             .navigationTitle("Setup")
             .navigationBarTitleDisplayMode(.inline)
+            .task {
+                viewModel.startDiscovery()
+            }
         }
     }
 }

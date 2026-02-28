@@ -39,10 +39,10 @@
 		<true/>
 	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Tarkus needs local network access to communicate with the KarnEvil9 server running on your local machine.</string>
+	<string>Tarkus uses the local network to discover and communicate with KarnEvil9 servers.</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_http._tcp</string>
+		<string>_karnevil9._tcp</string>
 	</array>
 </dict>
 </plist>
