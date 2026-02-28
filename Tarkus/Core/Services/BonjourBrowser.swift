@@ -68,17 +68,14 @@ class BonjourBrowser {
     // MARK: - Resolution
 
     private func handleResultsChanged(_ results: Set<NWBrowser.Result>) {
-        // Cancel stale resolution connections for results that disappeared
         let currentIDs = Set(results.map { resultID(for: $0) })
         for key in resolutionConnections.keys where !currentIDs.contains(key) {
             resolutionConnections[key]?.cancel()
             resolutionConnections.removeValue(forKey: key)
         }
 
-        // Remove servers that are no longer in the browse results
         servers.removeAll { !currentIDs.contains($0.id) }
 
-        // Resolve new results
         for result in results {
             let id = resultID(for: result)
             guard !servers.contains(where: { $0.id == id }) else { continue }
@@ -89,6 +86,7 @@ class BonjourBrowser {
     private func resolve(result: NWBrowser.Result, id: String) {
         guard case let .service(name, _, _, _) = result.endpoint else { return }
 
+        // Connect briefly to resolve the service endpoint and extract host + port.
         let connection = NWConnection(to: result.endpoint, using: .tcp)
         resolutionConnections[id] = connection
 
@@ -98,16 +96,15 @@ class BonjourBrowser {
             case .ready:
                 if let resolved = connection.currentPath?.remoteEndpoint,
                    case let .hostPort(host, port) = resolved {
+                    // Prefer IPv4 dotted-decimal for URL safety.
+                    // Fall back to the Bonjour service name, which for dns-sd
+                    // registrations defaults to the machine's .local hostname
+                    // (e.g. "Mac-mini.local") — resolvable via mDNS on iOS.
                     let hostString: String
-                    switch host {
-                    case .ipv4(let addr):
-                        hostString = "\(addr)"
-                    case .ipv6(let addr):
-                        hostString = "\(addr)"
-                    case .name(let hostname, _):
-                        hostString = hostname
-                    @unknown default:
-                        hostString = "\(host)"
+                    if case .ipv4 = host {
+                        hostString = host.debugDescription
+                    } else {
+                        hostString = name
                     }
                     let server = DiscoveredServer(
                         id: id,
