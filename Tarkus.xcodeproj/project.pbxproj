@@ -1,0 +1,654 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BCAD229475E8A8620CA37FC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C48D185A9311A7E733F1B73 /* NotificationService.swift */; };
+		16BE9DB7C68F6A84D15F4A90 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65195A43E6B802CC9848E7C /* AnyCodable.swift */; };
+		223F1C036960462C368978AB /* KarnEvil9Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01E0BE10FE627DCF5A684A5 /* KarnEvil9Client.swift */; };
+		22437E5902F4435CF54F2A4E /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB35B3780AF04DFAEA27F62C /* Session.swift */; };
+		2F36B78AC1102F21EAABC964 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9B5EB21836BAB9054BC534 /* PreviewData.swift */; };
+		3E3F6FD6953F5D1E5F325F6D /* ApprovalDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58029486C0E151D3A789CA50 /* ApprovalDetailView.swift */; };
+		3F33381D116B556B1D9C2D81 /* Approval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF77AE7CC3D382321520BD1 /* Approval.swift */; };
+		4273DD770F669894EBAB3CE5 /* SSEClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C2C3AF82652810E8FE6532 /* SSEClient.swift */; };
+		4408AC2359EE265F1EADA834 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65496AF04A530452DA39427 /* SettingsView.swift */; };
+		4953B2E6E617CABAFCB33DD0 /* MetricsBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D15EE56524EED6B6A37764 /* MetricsBarView.swift */; };
+		588DBAE9196B344EEE4707C7 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457BBA351EDBCBBEE251B6C6 /* AppRouter.swift */; };
+		61CACBBD4280ED1EAEAB171C /* UsageMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2EE02A460ACB08D6097D2 /* UsageMetrics.swift */; };
+		631EEA91BE44AD177CAB3BDE /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75D4F9B35B4B6346D2C7A0B /* ServerConfig.swift */; };
+		6618DE501430F3A74EA5C62F /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B234B0B7E8690E4ADC71D8F5 /* SettingsViewModel.swift */; };
+		6E05D62ECC1CCA9A46B86093 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C297D4F613EC6C8E64E02388 /* APIError.swift */; };
+		6E7CFA5A08328A2297528074 /* AppTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52197C56F12884DB0B79564 /* AppTabView.swift */; };
+		710F9840ABB0086B5BE003A5 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8883C0CB7BB8EA48388E39BE /* DashboardViewModel.swift */; };
+		7D55DEE8CE8F0BAC45EAB771 /* SSEEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F34427B5840208998A1E8E /* SSEEvent.swift */; };
+		7FE8FC73B3D031C202BA8F18 /* NewSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B9B60A9F8068A0710D064E /* NewSessionView.swift */; };
+		87E44DDF648D4E9B953C79EE /* SSEClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AF3772D1B2BBE5F14A3A44 /* SSEClientTests.swift */; };
+		888CD1CBDB9EC154E88DBCFB /* SessionListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E85629486908FB5FBC995C6E /* SessionListViewModel.swift */; };
+		8C5CD449EC69A8B2FAFF4227 /* ConnectionSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5750A272B6C431E6BC0ECD98 /* ConnectionSetupView.swift */; };
+		8D091932C133F77B14877633 /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13B69CCE72DC415D0AC946A /* APIEndpoint.swift */; };
+		98B5B2A75DAE887813279772 /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5242D4607A06C65A76EF631 /* DashboardViewModelTests.swift */; };
+		9B0E72D6B626492A45452485 /* ModelDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA213DD4A6C40BE5B107614 /* ModelDecodingTests.swift */; };
+		A05B853CB4BC41BC411D8656 /* SessionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035CCEE7B32CA429FFBB9F08 /* SessionHeaderView.swift */; };
+		A6C2D920EFDD783DBF24C4B4 /* Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D780F2FCD8DB4318DF4A66 /* Step.swift */; };
+		B6F9F166C577850D4851F11F /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134442F18EC7289E8F1CC7D9 /* KeychainService.swift */; };
+		C9058CD8975465C5A6B922FA /* SessionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67C21403C44C7C26D079C29 /* SessionListView.swift */; };
+		CAAD62C04C0F092CA261880A /* StepTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B6C76ED55C20578686CF2B /* StepTimelineView.swift */; };
+		CF596B64C5FA29A3A359EBD2 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98FFFB6B1E5A87D83C8946 /* DashboardView.swift */; };
+		D08C6AF82021C716DA0DA819 /* NewSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F723DF03A42DE0A3F8444DA4 /* NewSessionViewModel.swift */; };
+		D8FA52E8F5001C25A181CF2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4FF3EF18CD9A7F3153ADFA8 /* Assets.xcassets */; };
+		DD9B4E162A556FBD658C8A20 /* StepRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC41617F44DB5CE06C11E372 /* StepRowView.swift */; };
+		E8F744801351997FCAED8B21 /* ApprovalsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49499A6410DFE5A879565203 /* ApprovalsListView.swift */; };
+		EE07C6954C3B0E0AE7AF9C97 /* SessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8667ED0371CB9E3D569810EF /* SessionDetailView.swift */; };
+		EE8CE8F0A45EACDEFC5948F7 /* TarkusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD84F0A9A0071CB05B0317AA /* TarkusApp.swift */; };
+		F3AB91E6D04658589F98A9D3 /* ConnectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857821C5CF0EA5EADE0D5218 /* ConnectionViewModel.swift */; };
+		F4424DA487E4DBE873BFDF4A /* ApprovalsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E3352B0DDDB36CD67D4366 /* ApprovalsViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2836B3223663BA74F1426D7A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2845A559A93FB40082C15344 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B2557AB4708B3319E926F6F6;
+			remoteInfo = Tarkus;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		035CCEE7B32CA429FFBB9F08 /* SessionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionHeaderView.swift; sourceTree = "<group>"; };
+		07D15EE56524EED6B6A37764 /* MetricsBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsBarView.swift; sourceTree = "<group>"; };
+		134442F18EC7289E8F1CC7D9 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		22E3352B0DDDB36CD67D4366 /* ApprovalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalsViewModel.swift; sourceTree = "<group>"; };
+		25D780F2FCD8DB4318DF4A66 /* Step.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step.swift; sourceTree = "<group>"; };
+		2C48D185A9311A7E733F1B73 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		3F7829AC92F774CEDE91B521 /* Tarkus.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tarkus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F98FFFB6B1E5A87D83C8946 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		457BBA351EDBCBBEE251B6C6 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		49499A6410DFE5A879565203 /* ApprovalsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalsListView.swift; sourceTree = "<group>"; };
+		4C9B5EB21836BAB9054BC534 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+		4EA213DD4A6C40BE5B107614 /* ModelDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDecodingTests.swift; sourceTree = "<group>"; };
+		5750A272B6C431E6BC0ECD98 /* ConnectionSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSetupView.swift; sourceTree = "<group>"; };
+		58029486C0E151D3A789CA50 /* ApprovalDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalDetailView.swift; sourceTree = "<group>"; };
+		62F2EE02A460ACB08D6097D2 /* UsageMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMetrics.swift; sourceTree = "<group>"; };
+		6C47C95976043A9252D776A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		75CC12EACBD480702F013EE7 /* TarkusTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TarkusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		857821C5CF0EA5EADE0D5218 /* ConnectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionViewModel.swift; sourceTree = "<group>"; };
+		8667ED0371CB9E3D569810EF /* SessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailView.swift; sourceTree = "<group>"; };
+		8883C0CB7BB8EA48388E39BE /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		9DF77AE7CC3D382321520BD1 /* Approval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Approval.swift; sourceTree = "<group>"; };
+		A01E0BE10FE627DCF5A684A5 /* KarnEvil9Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KarnEvil9Client.swift; sourceTree = "<group>"; };
+		A4FF3EF18CD9A7F3153ADFA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A65195A43E6B802CC9848E7C /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodable.swift; sourceTree = "<group>"; };
+		A65496AF04A530452DA39427 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A75D4F9B35B4B6346D2C7A0B /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
+		AC41617F44DB5CE06C11E372 /* StepRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepRowView.swift; sourceTree = "<group>"; };
+		B234B0B7E8690E4ADC71D8F5 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		B5C2C3AF82652810E8FE6532 /* SSEClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEClient.swift; sourceTree = "<group>"; };
+		BD84F0A9A0071CB05B0317AA /* TarkusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarkusApp.swift; sourceTree = "<group>"; };
+		C13B69CCE72DC415D0AC946A /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
+		C1AF3772D1B2BBE5F14A3A44 /* SSEClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEClientTests.swift; sourceTree = "<group>"; };
+		C297D4F613EC6C8E64E02388 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		C52197C56F12884DB0B79564 /* AppTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabView.swift; sourceTree = "<group>"; };
+		D67C21403C44C7C26D079C29 /* SessionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionListView.swift; sourceTree = "<group>"; };
+		D9F34427B5840208998A1E8E /* SSEEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEEvent.swift; sourceTree = "<group>"; };
+		E85629486908FB5FBC995C6E /* SessionListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionListViewModel.swift; sourceTree = "<group>"; };
+		F1B6C76ED55C20578686CF2B /* StepTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepTimelineView.swift; sourceTree = "<group>"; };
+		F5242D4607A06C65A76EF631 /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
+		F723DF03A42DE0A3F8444DA4 /* NewSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSessionViewModel.swift; sourceTree = "<group>"; };
+		F7B9B60A9F8068A0710D064E /* NewSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSessionView.swift; sourceTree = "<group>"; };
+		FB35B3780AF04DFAEA27F62C /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0465411804C334D748CBBAFC /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				F7B9B60A9F8068A0710D064E /* NewSessionView.swift */,
+				F723DF03A42DE0A3F8444DA4 /* NewSessionViewModel.swift */,
+				8667ED0371CB9E3D569810EF /* SessionDetailView.swift */,
+				D67C21403C44C7C26D079C29 /* SessionListView.swift */,
+				E85629486908FB5FBC995C6E /* SessionListViewModel.swift */,
+			);
+			path = Sessions;
+			sourceTree = "<group>";
+		};
+		0821ECE16A4C5FE321616D91 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				B3338EC1E92DA0590E697D58 /* Models */,
+				593612BA16F1E942B0BCB784 /* Networking */,
+				CA4F12502F7CAAE591E52EE9 /* Services */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		0FA5CB0FAB34654199EE7787 /* TarkusTests */ = {
+			isa = PBXGroup;
+			children = (
+				F5242D4607A06C65A76EF631 /* DashboardViewModelTests.swift */,
+				4EA213DD4A6C40BE5B107614 /* ModelDecodingTests.swift */,
+				C1AF3772D1B2BBE5F14A3A44 /* SSEClientTests.swift */,
+			);
+			path = TarkusTests;
+			sourceTree = "<group>";
+		};
+		1C82750058852217771DD595 /* Tarkus */ = {
+			isa = PBXGroup;
+			children = (
+				A4FF3EF18CD9A7F3153ADFA8 /* Assets.xcassets */,
+				6C47C95976043A9252D776A2 /* Info.plist */,
+				BD84F0A9A0071CB05B0317AA /* TarkusApp.swift */,
+				0821ECE16A4C5FE321616D91 /* Core */,
+				49B814D35A772F02C3A15D16 /* Features */,
+				38A916870D09D530EABEF554 /* Navigation */,
+				27A0FC6B0F1406FADBAD7549 /* Preview Content */,
+			);
+			path = Tarkus;
+			sourceTree = "<group>";
+		};
+		27A0FC6B0F1406FADBAD7549 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4C9B5EB21836BAB9054BC534 /* PreviewData.swift */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		38A916870D09D530EABEF554 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				457BBA351EDBCBBEE251B6C6 /* AppRouter.swift */,
+				C52197C56F12884DB0B79564 /* AppTabView.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		49B814D35A772F02C3A15D16 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				B9BDD27F7DC890119CB330B9 /* Approvals */,
+				BC5633D265DBE7F89015287E /* Connection */,
+				614DC67520AA6C00B7F683FA /* Dashboard */,
+				0465411804C334D748CBBAFC /* Sessions */,
+				AAA7FA7D8736F0BDC019D5D8 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		593612BA16F1E942B0BCB784 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				C13B69CCE72DC415D0AC946A /* APIEndpoint.swift */,
+				A01E0BE10FE627DCF5A684A5 /* KarnEvil9Client.swift */,
+				B5C2C3AF82652810E8FE6532 /* SSEClient.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		614DC67520AA6C00B7F683FA /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				3F98FFFB6B1E5A87D83C8946 /* DashboardView.swift */,
+				8883C0CB7BB8EA48388E39BE /* DashboardViewModel.swift */,
+				07D15EE56524EED6B6A37764 /* MetricsBarView.swift */,
+				035CCEE7B32CA429FFBB9F08 /* SessionHeaderView.swift */,
+				AC41617F44DB5CE06C11E372 /* StepRowView.swift */,
+				F1B6C76ED55C20578686CF2B /* StepTimelineView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		7F98E67F1D087D7810DD61FE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3F7829AC92F774CEDE91B521 /* Tarkus.app */,
+				75CC12EACBD480702F013EE7 /* TarkusTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8FE8E0DAF4A18AF5EF00D101 = {
+			isa = PBXGroup;
+			children = (
+				1C82750058852217771DD595 /* Tarkus */,
+				0FA5CB0FAB34654199EE7787 /* TarkusTests */,
+				7F98E67F1D087D7810DD61FE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AAA7FA7D8736F0BDC019D5D8 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A65496AF04A530452DA39427 /* SettingsView.swift */,
+				B234B0B7E8690E4ADC71D8F5 /* SettingsViewModel.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		B3338EC1E92DA0590E697D58 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A65195A43E6B802CC9848E7C /* AnyCodable.swift */,
+				C297D4F613EC6C8E64E02388 /* APIError.swift */,
+				9DF77AE7CC3D382321520BD1 /* Approval.swift */,
+				A75D4F9B35B4B6346D2C7A0B /* ServerConfig.swift */,
+				FB35B3780AF04DFAEA27F62C /* Session.swift */,
+				D9F34427B5840208998A1E8E /* SSEEvent.swift */,
+				25D780F2FCD8DB4318DF4A66 /* Step.swift */,
+				62F2EE02A460ACB08D6097D2 /* UsageMetrics.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B9BDD27F7DC890119CB330B9 /* Approvals */ = {
+			isa = PBXGroup;
+			children = (
+				58029486C0E151D3A789CA50 /* ApprovalDetailView.swift */,
+				49499A6410DFE5A879565203 /* ApprovalsListView.swift */,
+				22E3352B0DDDB36CD67D4366 /* ApprovalsViewModel.swift */,
+			);
+			path = Approvals;
+			sourceTree = "<group>";
+		};
+		BC5633D265DBE7F89015287E /* Connection */ = {
+			isa = PBXGroup;
+			children = (
+				5750A272B6C431E6BC0ECD98 /* ConnectionSetupView.swift */,
+				857821C5CF0EA5EADE0D5218 /* ConnectionViewModel.swift */,
+			);
+			path = Connection;
+			sourceTree = "<group>";
+		};
+		CA4F12502F7CAAE591E52EE9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				134442F18EC7289E8F1CC7D9 /* KeychainService.swift */,
+				2C48D185A9311A7E733F1B73 /* NotificationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		18EB0575B470DBCCD384605D /* TarkusTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC2F9F5801C6F377182E0A2D /* Build configuration list for PBXNativeTarget "TarkusTests" */;
+			buildPhases = (
+				EC859DEA709D1EB619060967 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BBA9E810A6E46CEA373C4431 /* PBXTargetDependency */,
+			);
+			name = TarkusTests;
+			packageProductDependencies = (
+			);
+			productName = TarkusTests;
+			productReference = 75CC12EACBD480702F013EE7 /* TarkusTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B2557AB4708B3319E926F6F6 /* Tarkus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C37BFD5C01A4EF9BF3F69F7 /* Build configuration list for PBXNativeTarget "Tarkus" */;
+			buildPhases = (
+				80BDB670D3B01689F0A158DA /* Sources */,
+				257B8DC16944D87F843C779B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tarkus;
+			packageProductDependencies = (
+			);
+			productName = Tarkus;
+			productReference = 3F7829AC92F774CEDE91B521 /* Tarkus.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2845A559A93FB40082C15344 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					18EB0575B470DBCCD384605D = {
+						DevelopmentTeam = "";
+					};
+					B2557AB4708B3319E926F6F6 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = A1D1BACEC98679DF654D50E3 /* Build configuration list for PBXProject "Tarkus" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8FE8E0DAF4A18AF5EF00D101;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B2557AB4708B3319E926F6F6 /* Tarkus */,
+				18EB0575B470DBCCD384605D /* TarkusTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		257B8DC16944D87F843C779B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8FA52E8F5001C25A181CF2C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		80BDB670D3B01689F0A158DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D091932C133F77B14877633 /* APIEndpoint.swift in Sources */,
+				6E05D62ECC1CCA9A46B86093 /* APIError.swift in Sources */,
+				16BE9DB7C68F6A84D15F4A90 /* AnyCodable.swift in Sources */,
+				588DBAE9196B344EEE4707C7 /* AppRouter.swift in Sources */,
+				6E7CFA5A08328A2297528074 /* AppTabView.swift in Sources */,
+				3F33381D116B556B1D9C2D81 /* Approval.swift in Sources */,
+				3E3F6FD6953F5D1E5F325F6D /* ApprovalDetailView.swift in Sources */,
+				E8F744801351997FCAED8B21 /* ApprovalsListView.swift in Sources */,
+				F4424DA487E4DBE873BFDF4A /* ApprovalsViewModel.swift in Sources */,
+				8C5CD449EC69A8B2FAFF4227 /* ConnectionSetupView.swift in Sources */,
+				F3AB91E6D04658589F98A9D3 /* ConnectionViewModel.swift in Sources */,
+				CF596B64C5FA29A3A359EBD2 /* DashboardView.swift in Sources */,
+				710F9840ABB0086B5BE003A5 /* DashboardViewModel.swift in Sources */,
+				223F1C036960462C368978AB /* KarnEvil9Client.swift in Sources */,
+				B6F9F166C577850D4851F11F /* KeychainService.swift in Sources */,
+				4953B2E6E617CABAFCB33DD0 /* MetricsBarView.swift in Sources */,
+				7FE8FC73B3D031C202BA8F18 /* NewSessionView.swift in Sources */,
+				D08C6AF82021C716DA0DA819 /* NewSessionViewModel.swift in Sources */,
+				0BCAD229475E8A8620CA37FC /* NotificationService.swift in Sources */,
+				2F36B78AC1102F21EAABC964 /* PreviewData.swift in Sources */,
+				4273DD770F669894EBAB3CE5 /* SSEClient.swift in Sources */,
+				7D55DEE8CE8F0BAC45EAB771 /* SSEEvent.swift in Sources */,
+				631EEA91BE44AD177CAB3BDE /* ServerConfig.swift in Sources */,
+				22437E5902F4435CF54F2A4E /* Session.swift in Sources */,
+				EE07C6954C3B0E0AE7AF9C97 /* SessionDetailView.swift in Sources */,
+				A05B853CB4BC41BC411D8656 /* SessionHeaderView.swift in Sources */,
+				C9058CD8975465C5A6B922FA /* SessionListView.swift in Sources */,
+				888CD1CBDB9EC154E88DBCFB /* SessionListViewModel.swift in Sources */,
+				4408AC2359EE265F1EADA834 /* SettingsView.swift in Sources */,
+				6618DE501430F3A74EA5C62F /* SettingsViewModel.swift in Sources */,
+				A6C2D920EFDD783DBF24C4B4 /* Step.swift in Sources */,
+				DD9B4E162A556FBD658C8A20 /* StepRowView.swift in Sources */,
+				CAAD62C04C0F092CA261880A /* StepTimelineView.swift in Sources */,
+				EE8CE8F0A45EACDEFC5948F7 /* TarkusApp.swift in Sources */,
+				61CACBBD4280ED1EAEAB171C /* UsageMetrics.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC859DEA709D1EB619060967 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98B5B2A75DAE887813279772 /* DashboardViewModelTests.swift in Sources */,
+				9B0E72D6B626492A45452485 /* ModelDecodingTests.swift in Sources */,
+				87E44DDF648D4E9B953C79EE /* SSEClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BBA9E810A6E46CEA373C4431 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B2557AB4708B3319E926F6F6 /* Tarkus */;
+			targetProxy = 2836B3223663BA74F1426D7A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		05738B549588D10A57F1DAC1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_ASSET_PATHS = "\"Tarkus/Preview Content\"";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Tarkus/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.Tarkus;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		338FD3AC9936D9FB9451C0B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_ASSET_PATHS = "\"Tarkus/Preview Content\"";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Tarkus/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.Tarkus;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5BB1EA24F57BC2170F0C3C08 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.TarkusTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tarkus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tarkus";
+			};
+			name = Debug;
+		};
+		A345476BD39C4566AD5BE86D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		A9C2520664EF6119EA188B13 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.oldeucryptoboi.TarkusTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tarkus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tarkus";
+			};
+			name = Release;
+		};
+		AB3BA3F998927260B7E47E2A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C37BFD5C01A4EF9BF3F69F7 /* Build configuration list for PBXNativeTarget "Tarkus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				338FD3AC9936D9FB9451C0B4 /* Debug */,
+				05738B549588D10A57F1DAC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A1D1BACEC98679DF654D50E3 /* Build configuration list for PBXProject "Tarkus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB3BA3F998927260B7E47E2A /* Debug */,
+				A345476BD39C4566AD5BE86D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FC2F9F5801C6F377182E0A2D /* Build configuration list for PBXNativeTarget "TarkusTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BB1EA24F57BC2170F0C3C08 /* Debug */,
+				A9C2520664EF6119EA188B13 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2845A559A93FB40082C15344 /* Project object */;
+}
