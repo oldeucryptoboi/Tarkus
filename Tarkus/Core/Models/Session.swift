@@ -4,13 +4,14 @@ import Foundation
 
 /// The lifecycle state of a KarnEvil9 session.
 enum SessionState: String, Codable, CaseIterable, Equatable {
-    case idle
+    case planning
     case running
-    case paused
-    case waitingForApproval = "waiting_for_approval"
     case completed
     case failed
     case aborted
+    case unknown
+    case live
+    case paused
 
     /// Whether the session is in a terminal state.
     var isTerminal: Bool {
@@ -25,11 +26,18 @@ enum SessionState: String, Codable, CaseIterable, Equatable {
     /// Whether the session is actively processing.
     var isActive: Bool {
         switch self {
-        case .running, .paused, .waitingForApproval:
+        case .running, .planning, .live, .paused:
             return true
         default:
             return false
         }
+    }
+
+    /// Decode with a fallback to `.unknown` for unrecognized statuses.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        self = SessionState(rawValue: rawValue) ?? .unknown
     }
 }
 
@@ -37,14 +45,26 @@ enum SessionState: String, Codable, CaseIterable, Equatable {
 
 /// Request body for creating a new session via the KarnEvil9 API.
 struct CreateSessionRequest: Codable, Equatable {
-    let task: String
-    let plugin: String?
-    let allowedTools: [String]?
+    let text: String
+}
+
+// MARK: - Create Session Response
+
+/// Response from the KarnEvil9 API when creating a new session.
+/// The API returns `{ "session_id": "...", "status": "...", "task": { "text": "..." } }`.
+struct CreateSessionResponse: Codable {
+    let sessionId: String
+    let status: String
+    let task: TaskObject?
+
+    struct TaskObject: Codable {
+        let text: String
+    }
 
     enum CodingKeys: String, CodingKey {
+        case sessionId = "session_id"
+        case status
         case task
-        case plugin
-        case allowedTools = "allowed_tools"
     }
 }
 
@@ -55,40 +75,70 @@ struct Session: Codable, Identifiable, Equatable {
     let id: String
     let task: String
     let state: SessionState
-    let plugin: String?
+    let mode: String?
     let createdAt: Date
     let updatedAt: Date
-    let usage: UsageMetrics?
-    let stepCount: Int?
 
     enum CodingKeys: String, CodingKey {
+        case sessionId = "session_id"
         case id
         case task
+        case taskText = "task_text"
+        case status
         case state
-        case plugin
+        case mode
         case createdAt = "created_at"
         case updatedAt = "updated_at"
-        case usage
-        case stepCount = "step_count"
     }
 
-    // MARK: - Custom Decoding (ISO8601 dates)
+    // MARK: - Custom Decoding
 
+    /// Handles both list and detail API shapes:
+    /// - List: `{ "session_id": "...", "task_text": "...", "status": "..." }`
+    /// - Detail: `{ "session_id": "...", "task": { "text": "..." }, "status": "..." }`
+    /// Also handles the memberwise-encoded shape (with `id`, `task` as string, `state`).
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        task = try container.decode(String.self, forKey: .task)
-        state = try container.decode(SessionState.self, forKey: .state)
-        plugin = try container.decodeIfPresent(String.self, forKey: .plugin)
-        usage = try container.decodeIfPresent(UsageMetrics.self, forKey: .usage)
-        stepCount = try container.decodeIfPresent(Int.self, forKey: .stepCount)
+
+        // Decode id: prefer "session_id", fall back to "id"
+        if let sessionId = try container.decodeIfPresent(String.self, forKey: .sessionId) {
+            id = sessionId
+        } else {
+            id = try container.decode(String.self, forKey: .id)
+        }
+
+        // Decode task: try "task_text" (list), then "task" as object (detail), then "task" as string (memberwise)
+        if let taskText = try container.decodeIfPresent(String.self, forKey: .taskText) {
+            task = taskText
+        } else if let taskObject = try? container.decode(CreateSessionResponse.TaskObject.self, forKey: .task) {
+            task = taskObject.text
+        } else if let taskString = try container.decodeIfPresent(String.self, forKey: .task) {
+            task = taskString
+        } else {
+            task = ""
+        }
+
+        // Decode state: prefer "status", fall back to "state"
+        if let status = try container.decodeIfPresent(SessionState.self, forKey: .status) {
+            state = status
+        } else {
+            state = try container.decode(SessionState.self, forKey: .state)
+        }
+
+        mode = try container.decodeIfPresent(String.self, forKey: .mode)
 
         // Support both fractional-seconds and standard ISO8601
-        let createdAtString = try container.decode(String.self, forKey: .createdAt)
-        let updatedAtString = try container.decode(String.self, forKey: .updatedAt)
+        if let createdAtString = try container.decodeIfPresent(String.self, forKey: .createdAt) {
+            createdAt = try Self.parseISO8601Date(createdAtString, codingPath: container.codingPath + [CodingKeys.createdAt])
+        } else {
+            createdAt = Date()
+        }
 
-        createdAt = try Self.parseISO8601Date(createdAtString, codingPath: container.codingPath + [CodingKeys.createdAt])
-        updatedAt = try Self.parseISO8601Date(updatedAtString, codingPath: container.codingPath + [CodingKeys.updatedAt])
+        if let updatedAtString = try container.decodeIfPresent(String.self, forKey: .updatedAt) {
+            updatedAt = try Self.parseISO8601Date(updatedAtString, codingPath: container.codingPath + [CodingKeys.updatedAt])
+        } else {
+            updatedAt = Date()
+        }
     }
 
     // MARK: - Custom Encoding
@@ -98,9 +148,7 @@ struct Session: Codable, Identifiable, Equatable {
         try container.encode(id, forKey: .id)
         try container.encode(task, forKey: .task)
         try container.encode(state, forKey: .state)
-        try container.encodeIfPresent(plugin, forKey: .plugin)
-        try container.encodeIfPresent(usage, forKey: .usage)
-        try container.encodeIfPresent(stepCount, forKey: .stepCount)
+        try container.encodeIfPresent(mode, forKey: .mode)
 
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -114,20 +162,16 @@ struct Session: Codable, Identifiable, Equatable {
         id: String,
         task: String,
         state: SessionState,
-        plugin: String? = nil,
+        mode: String? = nil,
         createdAt: Date,
-        updatedAt: Date,
-        usage: UsageMetrics? = nil,
-        stepCount: Int? = nil
+        updatedAt: Date
     ) {
         self.id = id
         self.task = task
         self.state = state
-        self.plugin = plugin
+        self.mode = mode
         self.createdAt = createdAt
         self.updatedAt = updatedAt
-        self.usage = usage
-        self.stepCount = stepCount
     }
 
     // MARK: - Date Parsing Helper

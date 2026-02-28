@@ -2,8 +2,7 @@ import SwiftUI
 
 // MARK: - NewSessionView
 
-/// Sheet form for creating a new KarnEvil9 session with a task
-/// description and optional plugin selection.
+/// Sheet form for creating a new KarnEvil9 session with a task description.
 struct NewSessionView: View {
 
     // MARK: - State
@@ -23,31 +22,6 @@ struct NewSessionView: View {
                 Section("Task") {
                     TextField("Describe the task...", text: $viewModel.task, axis: .vertical)
                         .lineLimit(3...8)
-                }
-
-                // Plugin picker
-                Section("Plugin (Optional)") {
-                    if viewModel.plugins.isEmpty {
-                        Text("No plugins available")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Picker("Plugin", selection: $viewModel.selectedPlugin) {
-                            Text("None")
-                                .tag(nil as String?)
-                            ForEach(viewModel.plugins) { plugin in
-                                VStack(alignment: .leading) {
-                                    Text(plugin.name)
-                                    if let desc = plugin.description {
-                                        Text(desc)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                                .tag(plugin.name as String?)
-                            }
-                        }
-                        .pickerStyle(.inline)
-                    }
                 }
 
                 // Error display
@@ -95,9 +69,6 @@ struct NewSessionView: View {
                         dismiss()
                     }
                 }
-            }
-            .task {
-                await viewModel.loadPlugins()
             }
         }
     }

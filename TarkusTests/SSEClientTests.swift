@@ -3,194 +3,215 @@ import XCTest
 
 // MARK: - SSEClientTests
 
-/// Tests for the SSE event parsing logic in `KarnEvil9Event.parse(eventType:data:decoder:)`.
-/// Each test constructs a realistic JSON payload matching what the KarnEvil9 SSE stream
-/// would emit, then verifies the parsed event contains the expected data.
+/// Tests for the SSE event parsing logic in `KarnEvil9Event.parse(data:)`.
+/// The actual API sends the event type inside the JSON `"type"` field rather
+/// than on the SSE `event:` line. Each test constructs a realistic journal
+/// event JSON and verifies correct categorization.
 final class SSEClientTests: XCTestCase {
-
-    // MARK: - Helpers
-
-    /// A plain decoder — the models handle their own ISO8601 date parsing.
-    private let decoder = JSONDecoder()
 
     // MARK: - Session Events
 
-    func testParseSessionStartedEvent() throws {
+    func testParseSessionCreatedEvent() {
         let json = """
         {
-            "id": "sess_start_001",
-            "task": "Build a REST API",
-            "state": "running",
-            "plugin": "backend",
-            "created_at": "2025-06-15T10:00:00.000Z",
-            "updated_at": "2025-06-15T10:00:00.000Z",
-            "step_count": 0
+            "event_id": "evt_sc_001",
+            "timestamp": "2025-06-15T10:00:00.000Z",
+            "session_id": "sess_start_001",
+            "type": "session.created",
+            "payload": {
+                "task": "Build a REST API"
+            },
+            "seq": 1
         }
         """
 
-        let event = try KarnEvil9Event.parse(
-            eventType: "session_started",
-            data: json,
-            decoder: decoder
-        )
+        let event = KarnEvil9Event.parse(data: json)
 
-        if case .sessionStarted(let session) = event {
-            XCTAssertEqual(session.id, "sess_start_001")
-            XCTAssertEqual(session.task, "Build a REST API")
-            XCTAssertEqual(session.state, .running)
-            XCTAssertEqual(session.plugin, "backend")
+        if case .sessionEvent(let journalEvent) = event {
+            XCTAssertEqual(journalEvent.eventId, "evt_sc_001")
+            XCTAssertEqual(journalEvent.sessionId, "sess_start_001")
+            XCTAssertEqual(journalEvent.type, "session.created")
+            XCTAssertEqual(journalEvent.seq, 1)
+            XCTAssertEqual(journalEvent.payload?["task"]?.stringValue, "Build a REST API")
         } else {
-            XCTFail("Expected .sessionStarted, got \(event)")
+            XCTFail("Expected .sessionEvent, got \(event)")
+        }
+    }
+
+    func testParseSessionStartedEvent() {
+        let json = """
+        {
+            "event_id": "evt_ss_001",
+            "timestamp": "2025-06-15T10:00:01.000Z",
+            "session_id": "sess_start_001",
+            "type": "session.started",
+            "seq": 2
+        }
+        """
+
+        let event = KarnEvil9Event.parse(data: json)
+
+        if case .sessionEvent(let journalEvent) = event {
+            XCTAssertEqual(journalEvent.type, "session.started")
+        } else {
+            XCTFail("Expected .sessionEvent, got \(event)")
         }
     }
 
     // MARK: - Step Events
 
-    func testParseStepCompletedEvent() throws {
+    func testParseStepStartedEvent() {
         let json = """
         {
-            "id": "step_comp_001",
-            "index": 2,
-            "state": "completed",
-            "tool_call": {
-                "id": "tc_comp_001",
-                "tool": "Write",
-                "input": {
-                    "file_path": "src/index.ts",
-                    "content": "console.log('hello')"
-                }
-            },
-            "tool_result": {
-                "id": "tr_comp_001",
-                "output": "File written successfully",
-                "error": null,
-                "is_error": false
-            },
-            "started_at": "2025-06-15T10:01:00.000Z",
-            "completed_at": "2025-06-15T10:01:03.500Z",
-            "duration": 3.5
-        }
-        """
-
-        let event = try KarnEvil9Event.parse(
-            eventType: "step_completed",
-            data: json,
-            decoder: decoder
-        )
-
-        if case .stepCompleted(let step) = event {
-            XCTAssertEqual(step.id, "step_comp_001")
-            XCTAssertEqual(step.index, 2)
-            XCTAssertEqual(step.state, .completed)
-            XCTAssertEqual(step.toolCall?.tool, "Write")
-            XCTAssertEqual(step.toolResult?.output, "File written successfully")
-            XCTAssertEqual(step.toolResult?.isError, false)
-            XCTAssertEqual(step.duration ?? 0, 3.5, accuracy: 0.01)
-        } else {
-            XCTFail("Expected .stepCompleted, got \(event)")
-        }
-    }
-
-    // MARK: - Permission Events
-
-    func testParsePermissionRequestedEvent() throws {
-        let json = """
-        {
-            "id": "appr_perm_001",
+            "event_id": "evt_step_001",
+            "timestamp": "2025-06-15T10:01:00.000Z",
             "session_id": "sess_start_001",
-            "permission": {
-                "tool": "Bash",
-                "description": "Execute: docker compose up -d",
-                "input": {
-                    "command": "docker compose up -d"
-                }
+            "type": "step.started",
+            "payload": {
+                "tool": "Read",
+                "file_path": "package.json"
             },
-            "status": "pending",
-            "created_at": "2025-06-15T10:02:00.000Z"
+            "seq": 3
         }
         """
 
-        let event = try KarnEvil9Event.parse(
-            eventType: "permission_requested",
-            data: json,
-            decoder: decoder
-        )
+        let event = KarnEvil9Event.parse(data: json)
 
-        if case .permissionRequested(let approval) = event {
-            XCTAssertEqual(approval.id, "appr_perm_001")
-            XCTAssertEqual(approval.sessionId, "sess_start_001")
-            XCTAssertEqual(approval.permission.tool, "Bash")
-            XCTAssertEqual(approval.permission.description, "Execute: docker compose up -d")
-            XCTAssertEqual(approval.status, "pending")
+        if case .stepEvent(let journalEvent) = event {
+            XCTAssertEqual(journalEvent.type, "step.started")
+            XCTAssertEqual(journalEvent.payload?["tool"]?.stringValue, "Read")
         } else {
-            XCTFail("Expected .permissionRequested, got \(event)")
+            XCTFail("Expected .stepEvent, got \(event)")
         }
     }
 
-    // MARK: - Heartbeat Event
-
-    func testParseHeartbeatEvent() throws {
-        // Heartbeat events typically carry an empty JSON object or minimal data.
-        let json = "{}"
-
-        let event = try KarnEvil9Event.parse(
-            eventType: "heartbeat",
-            data: json,
-            decoder: decoder
-        )
-
-        if case .heartbeat = event {
-            // Success — heartbeat parsed correctly.
-        } else {
-            XCTFail("Expected .heartbeat, got \(event)")
-        }
-    }
-
-    // MARK: - Usage Updated Event
-
-    func testParseUsageUpdatedEvent() throws {
+    func testParseStepCompletedEvent() {
         let json = """
         {
-            "input_tokens": 18500,
-            "output_tokens": 4200,
-            "cache_read_tokens": 6000,
-            "cache_write_tokens": 1500,
-            "total_cost": 0.0950
+            "event_id": "evt_step_002",
+            "timestamp": "2025-06-15T10:01:03.500Z",
+            "session_id": "sess_start_001",
+            "type": "step.completed",
+            "payload": {
+                "tool": "Write",
+                "file_path": "src/index.ts"
+            },
+            "seq": 4
         }
         """
 
-        let event = try KarnEvil9Event.parse(
-            eventType: "usage_updated",
-            data: json,
-            decoder: decoder
-        )
+        let event = KarnEvil9Event.parse(data: json)
 
-        if case .usageUpdated(let metrics) = event {
-            XCTAssertEqual(metrics.inputTokens, 18500)
-            XCTAssertEqual(metrics.outputTokens, 4200)
-            XCTAssertEqual(metrics.cacheReadTokens, 6000)
-            XCTAssertEqual(metrics.cacheWriteTokens, 1500)
-            XCTAssertEqual(metrics.totalCost, 0.095, accuracy: 0.0001)
-            XCTAssertEqual(metrics.totalTokens, 22700)
+        if case .stepEvent(let journalEvent) = event {
+            XCTAssertEqual(journalEvent.type, "step.completed")
+            XCTAssertEqual(journalEvent.payload?["tool"]?.stringValue, "Write")
         } else {
-            XCTFail("Expected .usageUpdated, got \(event)")
+            XCTFail("Expected .stepEvent, got \(event)")
         }
     }
 
-    // MARK: - Error Event
+    // MARK: - Planner Events
 
-    func testParseErrorEvent() throws {
+    func testParsePlannerEvent() {
+        let json = """
+        {
+            "event_id": "evt_plan_001",
+            "timestamp": "2025-06-15T10:00:30.000Z",
+            "session_id": "sess_start_001",
+            "type": "planner.plan_generated",
+            "payload": {
+                "plan": "1. Read config\\n2. Implement feature"
+            },
+            "seq": 2
+        }
+        """
+
+        let event = KarnEvil9Event.parse(data: json)
+
+        if case .plannerEvent(let journalEvent) = event {
+            XCTAssertEqual(journalEvent.type, "planner.plan_generated")
+            XCTAssertNotNil(journalEvent.payload?["plan"])
+        } else {
+            XCTFail("Expected .plannerEvent, got \(event)")
+        }
+    }
+
+    // MARK: - Approval Events
+
+    func testParseApprovalRequestedEvent() {
+        let json = """
+        {
+            "event_id": "evt_appr_001",
+            "timestamp": "2025-06-15T10:02:00.000Z",
+            "session_id": "sess_start_001",
+            "type": "approval.requested",
+            "payload": {
+                "tool": "Bash",
+                "command": "docker compose up -d"
+            },
+            "seq": 5
+        }
+        """
+
+        let event = KarnEvil9Event.parse(data: json)
+
+        if case .approvalEvent(let journalEvent) = event {
+            XCTAssertEqual(journalEvent.type, "approval.requested")
+            XCTAssertEqual(journalEvent.payload?["tool"]?.stringValue, "Bash")
+        } else {
+            XCTFail("Expected .approvalEvent, got \(event)")
+        }
+    }
+
+    // MARK: - Unknown Event Type
+
+    func testParseUnknownPrefixEvent() {
+        let json = """
+        {
+            "event_id": "evt_unk_001",
+            "timestamp": "2025-06-15T10:03:00.000Z",
+            "session_id": "sess_start_001",
+            "type": "metrics.updated",
+            "payload": {
+                "input_tokens": 1500
+            },
+            "seq": 6
+        }
+        """
+
+        let event = KarnEvil9Event.parse(data: json)
+
+        if case .unknown(let journalEvent) = event {
+            XCTAssertEqual(journalEvent.type, "metrics.updated")
+        } else {
+            XCTFail("Expected .unknown, got \(event)")
+        }
+    }
+
+    // MARK: - Error Handling
+
+    func testParseMalformedDataReturnsError() {
+        let badJson = "this is not json"
+
+        let event = KarnEvil9Event.parse(data: badJson)
+
+        if case .error(let message) = event {
+            XCTAssertTrue(message.contains("Failed to parse"))
+        } else {
+            XCTFail("Expected .error, got \(event)")
+        }
+    }
+
+    func testParseErrorPayload() {
         let json = """
         {
             "message": "Session timed out after 300 seconds of inactivity"
         }
         """
 
-        let event = try KarnEvil9Event.parse(
-            eventType: "error",
-            data: json,
-            decoder: decoder
-        )
+        // When the JSON doesn't decode as a JournalEvent but does decode
+        // as an ErrorPayload, we should get an error event.
+        let event = KarnEvil9Event.parse(data: json)
 
         if case .error(let message) = event {
             XCTAssertEqual(message, "Session timed out after 300 seconds of inactivity")
@@ -199,106 +220,25 @@ final class SSEClientTests: XCTestCase {
         }
     }
 
-    // MARK: - Unrecognized Event Type
+    // MARK: - JournalEvent Round Trip
 
-    func testParseUnrecognizedEventThrows() {
-        let json = "{}"
-
-        XCTAssertThrowsError(
-            try KarnEvil9Event.parse(
-                eventType: "unknown_event_type",
-                data: json,
-                decoder: decoder
-            )
-        ) { error in
-            if case APIError.sseError(let detail) = error {
-                XCTAssertTrue(detail.contains("Unrecognized SSE event type"))
-            } else {
-                XCTFail("Expected APIError.sseError, got \(error)")
-            }
-        }
-    }
-
-    // MARK: - Malformed Data
-
-    func testParseMalformedDataThrows() {
-        let badJson = "this is not json"
-
-        XCTAssertThrowsError(
-            try KarnEvil9Event.parse(
-                eventType: "session_started",
-                data: badJson,
-                decoder: decoder
-            )
-        )
-    }
-
-    // MARK: - Additional Session Events
-
-    func testParseSessionCompletedEvent() throws {
-        let json = """
-        {
-            "id": "sess_done_001",
-            "task": "Refactor authentication module",
-            "state": "completed",
-            "created_at": "2025-06-15T09:00:00.000Z",
-            "updated_at": "2025-06-15T10:30:00.000Z",
-            "usage": {
-                "input_tokens": 45000,
-                "output_tokens": 12000,
-                "cache_read_tokens": 15000,
-                "cache_write_tokens": 3000,
-                "total_cost": 0.285
-            },
-            "step_count": 25
-        }
-        """
-
-        let event = try KarnEvil9Event.parse(
-            eventType: "session_completed",
-            data: json,
-            decoder: decoder
+    func testJournalEventRoundTrip() throws {
+        let original = JournalEvent(
+            eventId: "evt_rt_001",
+            timestamp: Date(),
+            sessionId: "sess_001",
+            type: "step.started",
+            payload: ["tool": AnyCodable("Read"), "file": AnyCodable("main.ts")],
+            seq: 3
         )
 
-        if case .sessionCompleted(let session) = event {
-            XCTAssertEqual(session.id, "sess_done_001")
-            XCTAssertEqual(session.state, .completed)
-            XCTAssertEqual(session.stepCount, 25)
-            XCTAssertEqual(session.usage?.totalCost ?? 0, 0.285, accuracy: 0.001)
-        } else {
-            XCTFail("Expected .sessionCompleted, got \(event)")
-        }
-    }
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(JournalEvent.self, from: data)
 
-    func testParseStepStartedEvent() throws {
-        let json = """
-        {
-            "id": "step_start_001",
-            "index": 0,
-            "state": "running",
-            "tool_call": {
-                "id": "tc_start_001",
-                "tool": "Read",
-                "input": {
-                    "file_path": "package.json"
-                }
-            },
-            "started_at": "2025-06-15T10:00:01.000Z"
-        }
-        """
-
-        let event = try KarnEvil9Event.parse(
-            eventType: "step_started",
-            data: json,
-            decoder: decoder
-        )
-
-        if case .stepStarted(let step) = event {
-            XCTAssertEqual(step.id, "step_start_001")
-            XCTAssertEqual(step.state, .running)
-            XCTAssertEqual(step.toolCall?.tool, "Read")
-        } else {
-            XCTFail("Expected .stepStarted, got \(event)")
-        }
+        XCTAssertEqual(decoded.eventId, original.eventId)
+        XCTAssertEqual(decoded.sessionId, original.sessionId)
+        XCTAssertEqual(decoded.type, original.type)
+        XCTAssertEqual(decoded.seq, original.seq)
+        XCTAssertEqual(decoded.payload?["tool"]?.stringValue, "Read")
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - DashboardView
 
 /// Main live monitoring view for an active KarnEvil9 session.
-/// Displays session header, step timeline, and metrics bar.
+/// Displays session header, event timeline, and optional metrics bar.
 struct DashboardView: View {
 
     // MARK: - State
@@ -50,12 +50,8 @@ struct DashboardView: View {
 
             Divider()
 
-            StepTimelineView(steps: viewModel.steps)
+            EventTimelineView(events: viewModel.events)
                 .frame(maxHeight: .infinity)
-
-            Divider()
-
-            MetricsBarView(metrics: viewModel.metrics)
         }
     }
 

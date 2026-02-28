@@ -96,11 +96,11 @@ final class DashboardViewModelTests: XCTestCase {
         XCTAssertEqual(PreviewData.completedSession.state, .completed)
     }
 
-    func testPreviewDataStepsExist() {
-        XCTAssertFalse(PreviewData.steps.isEmpty)
-        XCTAssertEqual(PreviewData.steps.count, 2)
-        XCTAssertEqual(PreviewData.step.state, .completed)
-        XCTAssertEqual(PreviewData.runningStep.state, .running)
+    func testPreviewDataEventsExist() {
+        XCTAssertFalse(PreviewData.events.isEmpty)
+        XCTAssertEqual(PreviewData.events.count, 5)
+        XCTAssertEqual(PreviewData.sessionCreatedEvent.type, "session.created")
+        XCTAssertEqual(PreviewData.stepStartedEvent.type, "step.started")
     }
 
     func testPreviewDataApprovalsExist() {

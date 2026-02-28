@@ -106,12 +106,13 @@ struct SessionListView: View {
     private func badgeColor(for state: SessionState) -> Color {
         switch state {
         case .running: return .green
+        case .planning: return .purple
+        case .live: return .green
         case .paused: return .yellow
         case .failed: return .red
         case .completed: return .blue
-        case .waitingForApproval: return .orange
-        case .idle: return .gray
         case .aborted: return .red
+        case .unknown: return .gray
         }
     }
 

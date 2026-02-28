@@ -6,94 +6,81 @@ import Foundation
 /// rendering. All values mirror the shapes returned by the KarnEvil9 API.
 enum PreviewData {
 
-    // MARK: - Usage Metrics
-
-    static let usageMetrics = UsageMetrics(
-        inputTokens: 15234,
-        outputTokens: 3421,
-        cacheReadTokens: 5000,
-        cacheWriteTokens: 1200,
-        totalCost: 0.0847
-    )
-
     // MARK: - Sessions
 
     static let session = Session(
         id: "sess_001",
         task: "Implement user authentication with OAuth2",
         state: .running,
-        plugin: "web-dev",
+        mode: "auto",
         createdAt: Date().addingTimeInterval(-3600),
-        updatedAt: Date(),
-        usage: usageMetrics,
-        stepCount: 5
+        updatedAt: Date()
     )
 
     static let completedSession = Session(
         id: "sess_002",
         task: "Fix database migration script",
         state: .completed,
-        plugin: nil,
         createdAt: Date().addingTimeInterval(-7200),
-        updatedAt: Date().addingTimeInterval(-3600),
-        usage: usageMetrics,
-        stepCount: 12
+        updatedAt: Date().addingTimeInterval(-3600)
     )
 
     static let sessions: [Session] = [session, completedSession]
 
-    // MARK: - Tool Call & Result
+    // MARK: - Journal Events
 
-    static let toolCall = ToolCall(
-        id: "tc_001",
-        tool: "Edit",
-        input: [
-            "file_path": AnyCodable("src/main.ts"),
-            "old_string": AnyCodable("const x = 1"),
-            "new_string": AnyCodable("const x = 2")
-        ]
+    static let sessionCreatedEvent = JournalEvent(
+        eventId: "evt_001",
+        timestamp: Date().addingTimeInterval(-60),
+        sessionId: "sess_001",
+        type: "session.created",
+        payload: ["task": AnyCodable("Implement user authentication with OAuth2")],
+        seq: 1
     )
 
-    static let toolResult = ToolResult(
-        id: "tr_001",
-        output: "File edited successfully",
-        error: nil,
-        isError: false
+    static let stepStartedEvent = JournalEvent(
+        eventId: "evt_002",
+        timestamp: Date().addingTimeInterval(-50),
+        sessionId: "sess_001",
+        type: "step.started",
+        payload: ["tool": AnyCodable("Read")],
+        seq: 2
     )
 
-    // MARK: - Steps
-
-    static let step = Step(
-        id: "step_001",
-        index: 0,
-        state: .completed,
-        toolCall: toolCall,
-        toolResult: toolResult,
-        assistantMessage: nil,
-        startedAt: Date().addingTimeInterval(-60),
-        completedAt: Date(),
-        duration: 60
+    static let stepCompletedEvent = JournalEvent(
+        eventId: "evt_003",
+        timestamp: Date().addingTimeInterval(-40),
+        sessionId: "sess_001",
+        type: "step.completed",
+        payload: ["tool": AnyCodable("Read")],
+        seq: 3
     )
 
-    static let runningStep = Step(
-        id: "step_002",
-        index: 1,
-        state: .running,
-        toolCall: ToolCall(
-            id: "tc_002",
-            tool: "Read",
-            input: [
-                "file_path": AnyCodable("src/auth.ts")
-            ]
-        ),
-        toolResult: nil,
-        assistantMessage: nil,
-        startedAt: Date().addingTimeInterval(-5),
-        completedAt: nil,
-        duration: nil
+    static let plannerEvent = JournalEvent(
+        eventId: "evt_004",
+        timestamp: Date().addingTimeInterval(-30),
+        sessionId: "sess_001",
+        type: "planner.plan_generated",
+        payload: ["plan": AnyCodable("1. Read auth config\n2. Implement OAuth flow")],
+        seq: 4
     )
 
-    static let steps: [Step] = [step, runningStep]
+    static let approvalEvent = JournalEvent(
+        eventId: "evt_005",
+        timestamp: Date().addingTimeInterval(-20),
+        sessionId: "sess_001",
+        type: "approval.requested",
+        payload: ["tool": AnyCodable("Bash"), "command": AnyCodable("npm install oauth2-client")],
+        seq: 5
+    )
+
+    static let events: [JournalEvent] = [
+        sessionCreatedEvent,
+        stepStartedEvent,
+        stepCompletedEvent,
+        plannerEvent,
+        approvalEvent
+    ]
 
     // MARK: - Permission & Approval
 
@@ -114,4 +101,14 @@ enum PreviewData {
     )
 
     static let approvals: [Approval] = [approval]
+
+    // MARK: - Usage Metrics
+
+    static let usageMetrics = UsageMetrics(
+        inputTokens: 15234,
+        outputTokens: 3421,
+        cacheReadTokens: 5000,
+        cacheWriteTokens: 1200,
+        totalCost: 0.0847
+    )
 }

@@ -4,36 +4,24 @@ import XCTest
 // MARK: - ModelDecodingTests
 
 /// Verifies that all core model types decode correctly from realistic JSON
-/// payloads matching the KarnEvil9 API response format (snake_case keys,
-/// ISO8601 dates with fractional seconds).
+/// payloads matching the actual KarnEvil9 API response format.
 final class ModelDecodingTests: XCTestCase {
 
     // MARK: - Helpers
 
-    /// A plain `JSONDecoder` — models handle their own date decoding via
-    /// custom `init(from:)` implementations rather than relying on a
-    /// decoder-level date strategy.
     private let decoder = JSONDecoder()
 
-    // MARK: - Session Decoding
+    // MARK: - Session Decoding (List Shape)
 
-    func testSessionDecoding() throws {
+    func testSessionDecodingFromListShape() throws {
         let json = """
         {
-            "id": "sess_abc123",
-            "task": "Implement user authentication",
-            "state": "running",
-            "plugin": "web-dev",
+            "session_id": "sess_abc123",
+            "task_text": "Implement user authentication",
+            "status": "running",
+            "mode": "auto",
             "created_at": "2025-06-15T10:30:00.000Z",
-            "updated_at": "2025-06-15T11:00:00.000Z",
-            "usage": {
-                "input_tokens": 12000,
-                "output_tokens": 3500,
-                "cache_read_tokens": 4000,
-                "cache_write_tokens": 800,
-                "total_cost": 0.072
-            },
-            "step_count": 7
+            "updated_at": "2025-06-15T11:00:00.000Z"
         }
         """.data(using: .utf8)!
 
@@ -42,20 +30,37 @@ final class ModelDecodingTests: XCTestCase {
         XCTAssertEqual(session.id, "sess_abc123")
         XCTAssertEqual(session.task, "Implement user authentication")
         XCTAssertEqual(session.state, .running)
-        XCTAssertEqual(session.plugin, "web-dev")
-        XCTAssertEqual(session.stepCount, 7)
-        XCTAssertNotNil(session.usage)
-        XCTAssertEqual(session.usage?.inputTokens, 12000)
-        XCTAssertEqual(session.usage?.outputTokens, 3500)
-        XCTAssertEqual(session.usage?.totalCost, 0.072)
+        XCTAssertEqual(session.mode, "auto")
     }
+
+    // MARK: - Session Decoding (Detail Shape)
+
+    func testSessionDecodingFromDetailShape() throws {
+        let json = """
+        {
+            "session_id": "sess_detail_001",
+            "task": { "text": "Refactor auth module" },
+            "status": "planning",
+            "created_at": "2025-06-15T10:30:00.000Z",
+            "updated_at": "2025-06-15T11:00:00.000Z"
+        }
+        """.data(using: .utf8)!
+
+        let session = try decoder.decode(Session.self, from: json)
+
+        XCTAssertEqual(session.id, "sess_detail_001")
+        XCTAssertEqual(session.task, "Refactor auth module")
+        XCTAssertEqual(session.state, .planning)
+    }
+
+    // MARK: - Session Decoding (Minimal / Memberwise)
 
     func testSessionDecodingMinimalFields() throws {
         let json = """
         {
-            "id": "sess_minimal",
-            "task": "Quick fix",
-            "state": "idle",
+            "session_id": "sess_minimal",
+            "task_text": "Quick fix",
+            "status": "completed",
             "created_at": "2025-06-15T10:30:00Z",
             "updated_at": "2025-06-15T10:30:00Z"
         }
@@ -64,10 +69,25 @@ final class ModelDecodingTests: XCTestCase {
         let session = try decoder.decode(Session.self, from: json)
 
         XCTAssertEqual(session.id, "sess_minimal")
-        XCTAssertEqual(session.state, .idle)
-        XCTAssertNil(session.plugin)
-        XCTAssertNil(session.usage)
-        XCTAssertNil(session.stepCount)
+        XCTAssertEqual(session.state, .completed)
+        XCTAssertNil(session.mode)
+    }
+
+    // MARK: - Session State Unknown Fallback
+
+    func testSessionStateUnknownFallback() throws {
+        let json = """
+        {
+            "session_id": "sess_unk",
+            "task_text": "test",
+            "status": "some_future_status",
+            "created_at": "2025-06-15T10:30:00Z",
+            "updated_at": "2025-06-15T10:30:00Z"
+        }
+        """.data(using: .utf8)!
+
+        let session = try decoder.decode(Session.self, from: json)
+        XCTAssertEqual(session.state, .unknown)
     }
 
     func testSessionStateTerminal() {
@@ -75,87 +95,69 @@ final class ModelDecodingTests: XCTestCase {
         XCTAssertTrue(SessionState.failed.isTerminal)
         XCTAssertTrue(SessionState.aborted.isTerminal)
         XCTAssertFalse(SessionState.running.isTerminal)
-        XCTAssertFalse(SessionState.idle.isTerminal)
+        XCTAssertFalse(SessionState.planning.isTerminal)
     }
 
     func testSessionStateActive() {
         XCTAssertTrue(SessionState.running.isActive)
+        XCTAssertTrue(SessionState.planning.isActive)
+        XCTAssertTrue(SessionState.live.isActive)
         XCTAssertTrue(SessionState.paused.isActive)
-        XCTAssertTrue(SessionState.waitingForApproval.isActive)
         XCTAssertFalse(SessionState.completed.isActive)
-        XCTAssertFalse(SessionState.idle.isActive)
+        XCTAssertFalse(SessionState.unknown.isActive)
     }
 
-    // MARK: - Step Decoding
+    // MARK: - JournalEvent Decoding
 
-    func testStepDecoding() throws {
+    func testJournalEventDecoding() throws {
         let json = """
         {
-            "id": "step_001",
-            "index": 3,
-            "state": "completed",
-            "tool_call": {
-                "id": "tc_001",
+            "event_id": "evt_001",
+            "timestamp": "2025-06-15T10:31:00.500Z",
+            "session_id": "sess_abc123",
+            "type": "step.completed",
+            "payload": {
                 "tool": "Edit",
-                "input": {
-                    "file_path": "src/main.ts",
-                    "old_string": "const x = 1",
-                    "new_string": "const x = 2"
-                }
+                "file_path": "src/main.ts"
             },
-            "tool_result": {
-                "id": "tr_001",
-                "output": "File edited successfully",
-                "error": null,
-                "is_error": false
-            },
-            "assistant_message": null,
-            "started_at": "2025-06-15T10:31:00.500Z",
-            "completed_at": "2025-06-15T10:31:05.200Z",
-            "duration": 4.7
+            "seq": 5
         }
         """.data(using: .utf8)!
 
-        let step = try decoder.decode(Step.self, from: json)
+        let event = try decoder.decode(JournalEvent.self, from: json)
 
-        XCTAssertEqual(step.id, "step_001")
-        XCTAssertEqual(step.index, 3)
-        XCTAssertEqual(step.state, .completed)
-        XCTAssertNotNil(step.toolCall)
-        XCTAssertEqual(step.toolCall?.tool, "Edit")
-        XCTAssertEqual(step.toolCall?.input["file_path"]?.stringValue, "src/main.ts")
-        XCTAssertNotNil(step.toolResult)
-        XCTAssertEqual(step.toolResult?.output, "File edited successfully")
-        XCTAssertEqual(step.toolResult?.isError, false)
-        XCTAssertNil(step.assistantMessage)
-        XCTAssertNotNil(step.startedAt)
-        XCTAssertNotNil(step.completedAt)
-        XCTAssertEqual(step.duration ?? 0, 4.7, accuracy: 0.01)
+        XCTAssertEqual(event.eventId, "evt_001")
+        XCTAssertEqual(event.id, "evt_001")
+        XCTAssertEqual(event.sessionId, "sess_abc123")
+        XCTAssertEqual(event.type, "step.completed")
+        XCTAssertEqual(event.seq, 5)
+        XCTAssertNotNil(event.payload)
+        XCTAssertEqual(event.payload?["tool"]?.stringValue, "Edit")
     }
 
-    func testStepDecodingRunningState() throws {
-        let json = """
-        {
-            "id": "step_running",
-            "index": 0,
-            "state": "running",
-            "tool_call": {
-                "id": "tc_run",
-                "tool": "Bash",
-                "input": {
-                    "command": "npm test"
-                }
-            },
-            "started_at": "2025-06-15T10:31:00.000Z"
-        }
-        """.data(using: .utf8)!
+    func testJournalEventTypeLabel() {
+        let event = JournalEvent(
+            eventId: "evt_test",
+            timestamp: Date(),
+            sessionId: "s1",
+            type: "planner.plan_generated",
+            seq: 1
+        )
 
-        let step = try decoder.decode(Step.self, from: json)
+        XCTAssertEqual(event.typeLabel, "Planner Plan Generated")
+    }
 
-        XCTAssertEqual(step.state, .running)
-        XCTAssertNil(step.toolResult)
-        XCTAssertNil(step.completedAt)
-        XCTAssertNil(step.duration)
+    func testJournalEventPayloadSummary() {
+        let event = JournalEvent(
+            eventId: "evt_test",
+            timestamp: Date(),
+            sessionId: "s1",
+            type: "step.started",
+            payload: ["tool": AnyCodable("Read")],
+            seq: 1
+        )
+
+        XCTAssertEqual(event.payloadSummary, "Tool: Read")
     }
 
     // MARK: - Approval Decoding
@@ -305,17 +307,9 @@ final class ModelDecodingTests: XCTestCase {
             id: "sess_round",
             task: "Round trip test",
             state: .paused,
-            plugin: "test-plugin",
+            mode: "manual",
             createdAt: Date(),
-            updatedAt: Date(),
-            usage: UsageMetrics(
-                inputTokens: 100,
-                outputTokens: 50,
-                cacheReadTokens: 20,
-                cacheWriteTokens: 10,
-                totalCost: 0.005
-            ),
-            stepCount: 3
+            updatedAt: Date()
         )
 
         let data = try JSONEncoder().encode(original)
@@ -324,8 +318,17 @@ final class ModelDecodingTests: XCTestCase {
         XCTAssertEqual(decoded.id, original.id)
         XCTAssertEqual(decoded.task, original.task)
         XCTAssertEqual(decoded.state, original.state)
-        XCTAssertEqual(decoded.plugin, original.plugin)
-        XCTAssertEqual(decoded.stepCount, original.stepCount)
-        XCTAssertEqual(decoded.usage?.inputTokens, original.usage?.inputTokens)
+        XCTAssertEqual(decoded.mode, original.mode)
+    }
+
+    // MARK: - CreateSessionRequest Encoding
+
+    func testCreateSessionRequestEncoding() throws {
+        let request = CreateSessionRequest(text: "Build a REST API")
+        let data = try JSONEncoder().encode(request)
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+
+        XCTAssertEqual(json?["text"] as? String, "Build a REST API")
+        XCTAssertNil(json?["task"]) // Should use "text", not "task"
     }
 }

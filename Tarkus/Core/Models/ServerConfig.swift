@@ -38,6 +38,11 @@ struct ServerConfig: Codable, Equatable {
         return config
     }
 
+    /// Returns `true` if a configuration has been explicitly saved by the user.
+    static var hasSavedConfig: Bool {
+        UserDefaults.standard.data(forKey: userDefaultsKey) != nil
+    }
+
     static func clear() {
         UserDefaults.standard.removeObject(forKey: userDefaultsKey)
     }

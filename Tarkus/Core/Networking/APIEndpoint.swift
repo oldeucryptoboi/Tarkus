@@ -23,10 +23,9 @@ enum APIEndpoint {
     case listApprovals
     case submitApproval(id: String, ApprovalResponse)
 
-    // MARK: - Tools & Plugins
+    // MARK: - Tools
 
     case listTools
-    case listPlugins
 
     // MARK: - Route Properties
 
@@ -54,8 +53,6 @@ enum APIEndpoint {
             return "/api/approvals/\(id)"
         case .listTools:
             return "/api/tools"
-        case .listPlugins:
-            return "/api/plugins"
         }
     }
 
@@ -67,8 +64,7 @@ enum APIEndpoint {
              .streamSession,
              .getSessionJournal,
              .listApprovals,
-             .listTools,
-             .listPlugins:
+             .listTools:
             return "GET"
         case .createSession,
              .abortSession,
@@ -93,12 +89,14 @@ enum APIEndpoint {
 
     /// Constructs a fully configured `URLRequest` from the endpoint, base URL,
     /// and authentication token.
-    func urlRequest(baseURL: URL, token: String) -> URLRequest {
+    func urlRequest(baseURL: URL, token: String?) -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
         var request = URLRequest(url: url)
 
         request.httpMethod = method
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        if let token, !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         if let body = body {

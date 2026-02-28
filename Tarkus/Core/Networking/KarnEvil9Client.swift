@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Response Types
+// MARK: - Response Wrappers
 
 /// Health check response from the KarnEvil9 API.
 struct HealthResponse: Codable {
@@ -8,20 +8,52 @@ struct HealthResponse: Codable {
     let version: String?
 }
 
+/// Wrapper for the sessions list endpoint: `{ "sessions": [...] }`.
+struct SessionsResponse: Codable {
+    let sessions: [Session]
+}
+
+/// Wrapper for the approvals list endpoint: `{ "pending": [...] }`.
+struct ApprovalsResponse: Codable {
+    let pending: [Approval]
+}
+
+/// Wrapper for the journal endpoint: `{ "events": [...] }`.
+struct JournalResponse: Codable {
+    let events: [JournalEvent]
+}
+
+/// Wrapper for the tools list endpoint: `{ "tools": [...] }`.
+struct ToolsResponse: Codable {
+    let tools: [ToolInfo]
+}
+
 /// Metadata about a tool registered in the KarnEvil9 server.
 struct ToolInfo: Codable, Identifiable {
     let name: String
     let description: String?
+    let version: String?
 
     var id: String { name }
-}
 
-/// Metadata about a plugin registered in the KarnEvil9 server.
-struct PluginInfo: Codable, Identifiable {
-    let name: String
-    let description: String?
+    enum CodingKeys: String, CodingKey {
+        case name
+        case description
+        case version
+    }
 
-    var id: String { name }
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+        version = try container.decodeIfPresent(String.self, forKey: .version)
+    }
+
+    init(name: String, description: String? = nil, version: String? = nil) {
+        self.name = name
+        self.description = description
+        self.version = version
+    }
 }
 
 // MARK: - KarnEvil9Client
@@ -54,9 +86,7 @@ class KarnEvil9Client {
             throw APIError.invalidURL
         }
 
-        guard let token = try KeychainService.getToken() else {
-            throw APIError.unauthorized
-        }
+        let token = try? KeychainService.getToken()
 
         let urlRequest = endpoint.urlRequest(baseURL: baseURL, token: token)
 
@@ -84,8 +114,6 @@ class KarnEvil9Client {
 
         do {
             let decoder = JSONDecoder()
-            // Models handle snake_case key mapping via explicit CodingKeys,
-            // and date parsing via custom init(from:). No automatic strategies needed.
             return try decoder.decode(T.self, from: data)
         } catch {
             throw APIError.from(decodingError: error)
@@ -98,9 +126,7 @@ class KarnEvil9Client {
             throw APIError.invalidURL
         }
 
-        guard let token = try KeychainService.getToken() else {
-            throw APIError.unauthorized
-        }
+        let token = try? KeychainService.getToken()
 
         let urlRequest = endpoint.urlRequest(baseURL: baseURL, token: token)
 
@@ -134,14 +160,23 @@ class KarnEvil9Client {
         try await request(.health)
     }
 
-    /// Lists all sessions.
+    /// Lists all sessions (unwraps `{ "sessions": [...] }`).
     func listSessions() async throws -> [Session] {
-        try await request(.listSessions)
+        let response: SessionsResponse = try await request(.listSessions)
+        return response.sessions
     }
 
-    /// Creates a new Claude Code session.
-    func createSession(_ request: CreateSessionRequest) async throws -> Session {
-        try await self.request(.createSession(request))
+    /// Creates a new Claude Code session. Converts the API's
+    /// `CreateSessionResponse` into a `Session` for the caller.
+    func createSession(_ createRequest: CreateSessionRequest) async throws -> Session {
+        let response: CreateSessionResponse = try await request(.createSession(createRequest))
+        return Session(
+            id: response.sessionId,
+            task: response.task?.text ?? createRequest.text,
+            state: SessionState(rawValue: response.status) ?? .unknown,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
     }
 
     /// Retrieves an existing session by identifier.
@@ -149,9 +184,10 @@ class KarnEvil9Client {
         try await request(.getSession(id: id))
     }
 
-    /// Retrieves the step journal for a session.
-    func getSessionJournal(id: String) async throws -> [Step] {
-        try await request(.getSessionJournal(id: id))
+    /// Retrieves the journal events for a session (unwraps `{ "events": [...] }`).
+    func getSessionJournal(id: String) async throws -> [JournalEvent] {
+        let response: JournalResponse = try await request(.getSessionJournal(id: id))
+        return response.events
     }
 
     /// Requests that a running session be aborted.
@@ -164,9 +200,10 @@ class KarnEvil9Client {
         try await requestVoid(.recoverSession(id: id))
     }
 
-    /// Lists all pending approval requests.
+    /// Lists all pending approval requests (unwraps `{ "pending": [...] }`).
     func listApprovals() async throws -> [Approval] {
-        try await request(.listApprovals)
+        let response: ApprovalsResponse = try await request(.listApprovals)
+        return response.pending
     }
 
     /// Submits a decision for a pending approval.
@@ -175,13 +212,9 @@ class KarnEvil9Client {
         try await requestVoid(.submitApproval(id: id, response))
     }
 
-    /// Lists all available tools on the server.
+    /// Lists all available tools on the server (unwraps `{ "tools": [...] }`).
     func listTools() async throws -> [ToolInfo] {
-        try await request(.listTools)
-    }
-
-    /// Lists all available plugins on the server.
-    func listPlugins() async throws -> [PluginInfo] {
-        try await request(.listPlugins)
+        let response: ToolsResponse = try await request(.listTools)
+        return response.tools
     }
 }

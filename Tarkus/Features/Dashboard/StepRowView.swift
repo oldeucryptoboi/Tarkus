@@ -1,58 +1,40 @@
 import SwiftUI
 
-// MARK: - StepRowView
+// MARK: - EventRowView
 
-/// A single row in the step timeline representing one unit of work.
-/// Displays a status icon, tool name, optional assistant message preview,
-/// and duration.
-struct StepRowView: View {
+/// A single row in the event timeline representing one journal event.
+/// Displays a type icon, event type label, optional payload summary,
+/// and timestamp.
+struct EventRowView: View {
 
     // MARK: - Properties
 
-    let step: Step
+    let event: JournalEvent
 
     // MARK: - Body
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            statusIcon
+            eventIcon
                 .frame(width: 28, height: 28)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    if let toolCall = step.toolCall {
-                        Text(toolCall.tool)
-                            .font(.subheadline.weight(.semibold))
-                    } else {
-                        Text("Step \(step.index + 1)")
-                            .font(.subheadline.weight(.semibold))
-                    }
+                    Text(event.typeLabel)
+                        .font(.subheadline.weight(.semibold))
 
                     Spacer()
 
-                    if let duration = step.duration {
-                        Text(Self.formatDuration(duration))
-                            .font(.caption.monospacedDigit())
-                            .foregroundStyle(.secondary)
-                    } else if step.state == .running {
-                        ProgressView()
-                            .controlSize(.mini)
-                    }
+                    Text(event.timestamp, style: .time)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
                 }
 
-                if let message = step.assistantMessage, !message.isEmpty {
-                    Text(message)
+                if let summary = event.payloadSummary {
+                    Text(summary)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
-                }
-
-                if let toolResult = step.toolResult, toolResult.isError,
-                   let errorText = toolResult.error {
-                    Text(errorText)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .lineLimit(1)
                 }
             }
         }
@@ -60,41 +42,40 @@ struct StepRowView: View {
         .padding(.vertical, 10)
     }
 
-    // MARK: - Status Icon
+    // MARK: - Event Icon
 
     @ViewBuilder
-    private var statusIcon: some View {
-        switch step.state {
-        case .completed:
+    private var eventIcon: some View {
+        let type = event.type
+
+        if type.hasSuffix(".completed") || type.hasSuffix(".plan_generated") {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(.green)
                 .font(.title3)
-        case .failed:
+        } else if type.hasSuffix(".failed") || type.hasSuffix(".aborted") {
             Image(systemName: "xmark.circle.fill")
                 .foregroundStyle(.red)
                 .font(.title3)
-        case .running:
+        } else if type.hasSuffix(".started") || type.hasSuffix(".requested") {
             Image(systemName: "arrow.clockwise.circle.fill")
                 .foregroundStyle(.blue)
                 .font(.title3)
-        case .pending:
+        } else if type.hasPrefix("planner.") {
+            Image(systemName: "map.circle.fill")
+                .foregroundStyle(.purple)
+                .font(.title3)
+        } else if type.hasPrefix("approval.") {
+            Image(systemName: "hand.raised.circle.fill")
+                .foregroundStyle(.orange)
+                .font(.title3)
+        } else if type.hasPrefix("session.") {
+            Image(systemName: "bolt.circle.fill")
+                .foregroundStyle(.teal)
+                .font(.title3)
+        } else {
             Image(systemName: "circle")
                 .foregroundStyle(.secondary)
                 .font(.title3)
-        }
-    }
-
-    // MARK: - Helpers
-
-    private static func formatDuration(_ seconds: TimeInterval) -> String {
-        if seconds < 1 {
-            return String(format: "%.0fms", seconds * 1000)
-        } else if seconds < 60 {
-            return String(format: "%.1fs", seconds)
-        } else {
-            let minutes = Int(seconds) / 60
-            let secs = Int(seconds) % 60
-            return "\(minutes)m \(secs)s"
         }
     }
 }
@@ -103,28 +84,34 @@ struct StepRowView: View {
 
 #Preview {
     VStack(spacing: 0) {
-        StepRowView(step: Step(
-            id: "1", index: 0, state: .completed,
-            toolCall: ToolCall(id: "tc-1", tool: "Read", input: [:]),
-            assistantMessage: "Reading the configuration file to understand the project structure.",
-            duration: 1.2
+        EventRowView(event: JournalEvent(
+            eventId: "1", timestamp: Date().addingTimeInterval(-60),
+            sessionId: "s1", type: "session.created",
+            payload: ["task": AnyCodable("Build API")], seq: 1
         ))
         Divider().padding(.leading, 52)
-        StepRowView(step: Step(
-            id: "2", index: 1, state: .running,
-            toolCall: ToolCall(id: "tc-2", tool: "Edit", input: [:]),
-            startedAt: Date()
+        EventRowView(event: JournalEvent(
+            eventId: "2", timestamp: Date().addingTimeInterval(-50),
+            sessionId: "s1", type: "planner.plan_generated",
+            payload: ["plan": AnyCodable("1. Read files\n2. Edit code")], seq: 2
         ))
         Divider().padding(.leading, 52)
-        StepRowView(step: Step(
-            id: "3", index: 2, state: .failed,
-            toolCall: ToolCall(id: "tc-3", tool: "Bash", input: [:]),
-            toolResult: ToolResult(id: "tr-3", output: nil, error: "Command failed with exit code 1", isError: true),
-            duration: 0.5
+        EventRowView(event: JournalEvent(
+            eventId: "3", timestamp: Date().addingTimeInterval(-40),
+            sessionId: "s1", type: "step.started",
+            payload: ["tool": AnyCodable("Read")], seq: 3
         ))
         Divider().padding(.leading, 52)
-        StepRowView(step: Step(
-            id: "4", index: 3, state: .pending
+        EventRowView(event: JournalEvent(
+            eventId: "4", timestamp: Date().addingTimeInterval(-30),
+            sessionId: "s1", type: "step.completed",
+            payload: ["tool": AnyCodable("Read")], seq: 4
+        ))
+        Divider().padding(.leading, 52)
+        EventRowView(event: JournalEvent(
+            eventId: "5", timestamp: Date().addingTimeInterval(-20),
+            sessionId: "s1", type: "approval.requested",
+            payload: ["tool": AnyCodable("Bash")], seq: 5
         ))
     }
 }

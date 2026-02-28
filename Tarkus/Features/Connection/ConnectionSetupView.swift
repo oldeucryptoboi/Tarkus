@@ -44,11 +44,15 @@ struct ConnectionSetupView: View {
                         .keyboardType(.numberPad)
                 }
 
-                Section("Authentication") {
+                Section {
                     SecureField("API Token", text: $viewModel.token)
                         .textContentType(.password)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
+                } header: {
+                    Text("Authentication")
+                } footer: {
+                    Text("Optional. Only needed if the server requires a token.")
                 }
 
                 // Validation status

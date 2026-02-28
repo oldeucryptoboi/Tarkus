@@ -17,6 +17,7 @@
 		4273DD770F669894EBAB3CE5 /* SSEClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C2C3AF82652810E8FE6532 /* SSEClient.swift */; };
 		4408AC2359EE265F1EADA834 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65496AF04A530452DA39427 /* SettingsView.swift */; };
 		4953B2E6E617CABAFCB33DD0 /* MetricsBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D15EE56524EED6B6A37764 /* MetricsBarView.swift */; };
+		4B532ACD337117620999F28D /* JournalEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709CE48EDD90864980CCAE06 /* JournalEvent.swift */; };
 		588DBAE9196B344EEE4707C7 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457BBA351EDBCBBEE251B6C6 /* AppRouter.swift */; };
 		61CACBBD4280ED1EAEAB171C /* UsageMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2EE02A460ACB08D6097D2 /* UsageMetrics.swift */; };
 		631EEA91BE44AD177CAB3BDE /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75D4F9B35B4B6346D2C7A0B /* ServerConfig.swift */; };
@@ -33,7 +34,6 @@
 		98B5B2A75DAE887813279772 /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5242D4607A06C65A76EF631 /* DashboardViewModelTests.swift */; };
 		9B0E72D6B626492A45452485 /* ModelDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA213DD4A6C40BE5B107614 /* ModelDecodingTests.swift */; };
 		A05B853CB4BC41BC411D8656 /* SessionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035CCEE7B32CA429FFBB9F08 /* SessionHeaderView.swift */; };
-		A6C2D920EFDD783DBF24C4B4 /* Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D780F2FCD8DB4318DF4A66 /* Step.swift */; };
 		B6F9F166C577850D4851F11F /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134442F18EC7289E8F1CC7D9 /* KeychainService.swift */; };
 		C9058CD8975465C5A6B922FA /* SessionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67C21403C44C7C26D079C29 /* SessionListView.swift */; };
 		CAAD62C04C0F092CA261880A /* StepTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B6C76ED55C20578686CF2B /* StepTimelineView.swift */; };
@@ -63,7 +63,6 @@
 		07D15EE56524EED6B6A37764 /* MetricsBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsBarView.swift; sourceTree = "<group>"; };
 		134442F18EC7289E8F1CC7D9 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		22E3352B0DDDB36CD67D4366 /* ApprovalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalsViewModel.swift; sourceTree = "<group>"; };
-		25D780F2FCD8DB4318DF4A66 /* Step.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step.swift; sourceTree = "<group>"; };
 		2C48D185A9311A7E733F1B73 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		3F7829AC92F774CEDE91B521 /* Tarkus.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tarkus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F98FFFB6B1E5A87D83C8946 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
@@ -75,6 +74,7 @@
 		58029486C0E151D3A789CA50 /* ApprovalDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalDetailView.swift; sourceTree = "<group>"; };
 		62F2EE02A460ACB08D6097D2 /* UsageMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMetrics.swift; sourceTree = "<group>"; };
 		6C47C95976043A9252D776A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		709CE48EDD90864980CCAE06 /* JournalEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalEvent.swift; sourceTree = "<group>"; };
 		75CC12EACBD480702F013EE7 /* TarkusTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TarkusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		857821C5CF0EA5EADE0D5218 /* ConnectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionViewModel.swift; sourceTree = "<group>"; };
 		8667ED0371CB9E3D569810EF /* SessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailView.swift; sourceTree = "<group>"; };
@@ -235,10 +235,10 @@
 				A65195A43E6B802CC9848E7C /* AnyCodable.swift */,
 				C297D4F613EC6C8E64E02388 /* APIError.swift */,
 				9DF77AE7CC3D382321520BD1 /* Approval.swift */,
+				709CE48EDD90864980CCAE06 /* JournalEvent.swift */,
 				A75D4F9B35B4B6346D2C7A0B /* ServerConfig.swift */,
 				FB35B3780AF04DFAEA27F62C /* Session.swift */,
 				D9F34427B5840208998A1E8E /* SSEEvent.swift */,
-				25D780F2FCD8DB4318DF4A66 /* Step.swift */,
 				62F2EE02A460ACB08D6097D2 /* UsageMetrics.swift */,
 			);
 			path = Models;
@@ -377,6 +377,7 @@
 				F3AB91E6D04658589F98A9D3 /* ConnectionViewModel.swift in Sources */,
 				CF596B64C5FA29A3A359EBD2 /* DashboardView.swift in Sources */,
 				710F9840ABB0086B5BE003A5 /* DashboardViewModel.swift in Sources */,
+				4B532ACD337117620999F28D /* JournalEvent.swift in Sources */,
 				223F1C036960462C368978AB /* KarnEvil9Client.swift in Sources */,
 				B6F9F166C577850D4851F11F /* KeychainService.swift in Sources */,
 				4953B2E6E617CABAFCB33DD0 /* MetricsBarView.swift in Sources */,
@@ -394,7 +395,6 @@
 				888CD1CBDB9EC154E88DBCFB /* SessionListViewModel.swift in Sources */,
 				4408AC2359EE265F1EADA834 /* SettingsView.swift in Sources */,
 				6618DE501430F3A74EA5C62F /* SettingsViewModel.swift in Sources */,
-				A6C2D920EFDD783DBF24C4B4 /* Step.swift in Sources */,
 				DD9B4E162A556FBD658C8A20 /* StepRowView.swift in Sources */,
 				CAAD62C04C0F092CA261880A /* StepTimelineView.swift in Sources */,
 				EE8CE8F0A45EACDEFC5948F7 /* TarkusApp.swift in Sources */,

@@ -28,7 +28,6 @@ class ConnectionViewModel {
     var canValidate: Bool {
         !host.trimmingCharacters(in: .whitespaces).isEmpty
             && !port.trimmingCharacters(in: .whitespaces).isEmpty
-            && !token.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     // MARK: - Actions
@@ -45,14 +44,19 @@ class ConnectionViewModel {
         let config = serverConfig
         let client = KarnEvil9Client(serverConfig: config)
 
-        // Store the token first so the client can authenticate
-        do {
-            try KeychainService.saveToken(token)
-        } catch {
-            isValidating = false
-            isValid = false
-            errorMessage = "Failed to save token: \(error.localizedDescription)"
-            return
+        // Store the token if provided, otherwise clear any existing one
+        let trimmedToken = token.trimmingCharacters(in: .whitespaces)
+        if !trimmedToken.isEmpty {
+            do {
+                try KeychainService.saveToken(trimmedToken)
+            } catch {
+                isValidating = false
+                isValid = false
+                errorMessage = "Failed to save token: \(error.localizedDescription)"
+                return
+            }
+        } else {
+            try? KeychainService.deleteToken()
         }
 
         do {
@@ -63,8 +67,10 @@ class ConnectionViewModel {
         } catch {
             isValid = false
             errorMessage = error.localizedDescription
-            // Clean up the stored token on failure
-            try? KeychainService.deleteToken()
+            // Clean up the stored token on failure only if one was provided
+            if !trimmedToken.isEmpty {
+                try? KeychainService.deleteToken()
+            }
         }
 
         isValidating = false

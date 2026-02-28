@@ -11,12 +11,11 @@ class DashboardViewModel {
     // MARK: - Properties
 
     var currentSession: Session?
-    var steps: [Step] = []
+    var events: [JournalEvent] = []
     var isConnected: Bool = false
     var isLoading: Bool = false
     var errorMessage: String?
     var pendingApprovals: Int = 0
-    var metrics: UsageMetrics?
 
     // MARK: - Dependencies
 
@@ -44,8 +43,7 @@ class DashboardViewModel {
         // Fetch the initial session state
         do {
             currentSession = try await client.getSession(id: sessionId)
-            steps = try await client.getSessionJournal(id: sessionId)
-            metrics = currentSession?.usage
+            events = try await client.getSessionJournal(id: sessionId)
             isConnected = true
         } catch {
             errorMessage = error.localizedDescription
@@ -63,7 +61,9 @@ class DashboardViewModel {
 
             for await event in stream {
                 guard !Task.isCancelled else { break }
-                await self.handleEvent(event)
+                await MainActor.run {
+                    self.handleEvent(event)
+                }
             }
 
             await MainActor.run {
@@ -100,74 +100,43 @@ class DashboardViewModel {
 
     // MARK: - Event Handling
 
-    @MainActor
     private func handleEvent(_ event: KarnEvil9Event) {
         switch event {
-        // Session lifecycle
-        case .sessionStarted(let session),
-             .sessionResumed(let session),
-             .sessionPaused(let session):
-            currentSession = session
-
-        case .sessionCompleted(let session):
-            currentSession = session
-            isConnected = false
-
-        case .sessionFailed(let session):
-            currentSession = session
-            isConnected = false
-
-        case .sessionAborted(let session):
-            currentSession = session
-            isConnected = false
-
-        // Step lifecycle
-        case .stepStarted(let step):
-            steps.append(step)
-
-        case .stepCompleted(let step):
-            if let index = steps.firstIndex(where: { $0.id == step.id }) {
-                steps[index] = step
+        case .sessionEvent(let journalEvent):
+            events.append(journalEvent)
+            // Refresh session state on terminal events
+            if journalEvent.type == "session.completed" ||
+               journalEvent.type == "session.failed" ||
+               journalEvent.type == "session.aborted" {
+                isConnected = false
+                Task {
+                    currentSession = try? await client.getSession(id: journalEvent.sessionId)
+                }
             } else {
-                steps.append(step)
+                Task {
+                    currentSession = try? await client.getSession(id: journalEvent.sessionId)
+                }
             }
 
-        case .stepFailed(let step):
-            if let index = steps.firstIndex(where: { $0.id == step.id }) {
-                steps[index] = step
-            } else {
-                steps.append(step)
+        case .stepEvent(let journalEvent):
+            events.append(journalEvent)
+
+        case .plannerEvent(let journalEvent):
+            events.append(journalEvent)
+
+        case .approvalEvent(let journalEvent):
+            events.append(journalEvent)
+            if journalEvent.type == "approval.requested" {
+                pendingApprovals += 1
+            } else if journalEvent.type == "approval.resolved" {
+                pendingApprovals = max(0, pendingApprovals - 1)
             }
 
-        // Tool execution
-        case .toolCallStarted:
-            break // Tool calls are tracked via step events
-
-        case .toolResultReceived:
-            break // Tool results are tracked via step events
-
-        // Assistant output
-        case .assistantMessage:
-            break // Could be displayed in a future detail view
-
-        // Permissions
-        case .permissionRequested:
-            pendingApprovals += 1
-
-        case .permissionResolved:
-            pendingApprovals = max(0, pendingApprovals - 1)
-
-        // Metrics
-        case .usageUpdated(let updatedMetrics):
-            metrics = updatedMetrics
-
-        // Error
         case .error(message: let message):
             errorMessage = message
 
-        // Heartbeat
-        case .heartbeat:
-            break
+        case .unknown(let journalEvent):
+            events.append(journalEvent)
         }
     }
 }

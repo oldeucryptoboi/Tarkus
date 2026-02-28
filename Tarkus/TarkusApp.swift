@@ -26,17 +26,10 @@ struct TarkusApp: App {
     // MARK: - Initialization
 
     init() {
-        // Attempt to restore a saved server configuration and Keychain token.
-        let savedConfig = ServerConfig.load()
-        let hasToken = (try? KeychainService.getToken()) != nil
-
-        // Only consider configured when we have a non-default host AND a token.
-        if hasToken && !savedConfig.host.isEmpty && savedConfig.host != "localhost" {
-            let configuredClient = KarnEvil9Client(serverConfig: savedConfig)
-            _client = State(initialValue: configuredClient)
-            _isConfigured = State(initialValue: true)
-        } else if hasToken {
-            // Accept localhost as valid when a token is present (local dev).
+        // Attempt to restore a previously saved server configuration.
+        // A token is not required — the server may not need authentication.
+        if ServerConfig.hasSavedConfig {
+            let savedConfig = ServerConfig.load()
             let configuredClient = KarnEvil9Client(serverConfig: savedConfig)
             _client = State(initialValue: configuredClient)
             _isConfigured = State(initialValue: true)
@@ -63,13 +56,13 @@ struct TarkusApp: App {
                         }
                 } else {
                     ConnectionSetupView(isConnected: $isConfigured)
-                        .onChange(of: isConfigured) { _, newValue in
-                            if newValue {
-                                // Re-read config after successful connection setup.
-                                let config = ServerConfig.load()
-                                client = KarnEvil9Client(serverConfig: config)
-                            }
-                        }
+                }
+            }
+            .onChange(of: isConfigured) { _, newValue in
+                if newValue && client == nil {
+                    // Re-read config after successful connection setup.
+                    let config = ServerConfig.load()
+                    client = KarnEvil9Client(serverConfig: config)
                 }
             }
         }

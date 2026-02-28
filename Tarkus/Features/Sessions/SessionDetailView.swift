@@ -2,8 +2,7 @@ import SwiftUI
 
 // MARK: - SessionDetailView
 
-/// Detailed view for a single session, showing header info, journal steps,
-/// and usage metrics.
+/// Detailed view for a single session, showing header info and journal events.
 struct SessionDetailView: View {
 
     // MARK: - Properties
@@ -11,8 +10,8 @@ struct SessionDetailView: View {
     let session: Session
     let client: KarnEvil9Client
 
-    @State private var steps: [Step] = []
-    @State private var isLoadingSteps = false
+    @State private var events: [JournalEvent] = []
+    @State private var isLoadingEvents = false
 
     // MARK: - Body
 
@@ -20,8 +19,7 @@ struct SessionDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 headerSection
-                stepsSection
-                metricsSection
+                eventsSection
 
                 if session.state.isActive {
                     monitorButton
@@ -43,8 +41,8 @@ struct SessionDetailView: View {
             HStack {
                 stateBadge
                 Spacer()
-                if let plugin = session.plugin {
-                    Label(plugin, systemImage: "puzzlepiece")
+                if let mode = session.mode {
+                    Label(mode, systemImage: "gearshape")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -89,39 +87,40 @@ struct SessionDetailView: View {
     private var badgeColor: Color {
         switch session.state {
         case .running: return .green
+        case .planning: return .purple
+        case .live: return .green
         case .paused: return .yellow
         case .failed: return .red
         case .completed: return .blue
-        case .waitingForApproval: return .orange
-        case .idle: return .gray
         case .aborted: return .red
+        case .unknown: return .gray
         }
     }
 
-    // MARK: - Steps
+    // MARK: - Events
 
-    private var stepsSection: some View {
+    private var eventsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Journal")
                     .font(.headline)
                 Spacer()
-                if isLoadingSteps {
+                if isLoadingEvents {
                     ProgressView()
                         .controlSize(.small)
                 }
             }
 
-            if steps.isEmpty && !isLoadingSteps {
-                Text("No steps recorded.")
+            if events.isEmpty && !isLoadingEvents {
+                Text("No events recorded.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .padding(.vertical, 8)
             } else {
                 LazyVStack(spacing: 0) {
-                    ForEach(steps) { step in
-                        StepRowView(step: step)
-                        if step.id != steps.last?.id {
+                    ForEach(events) { event in
+                        EventRowView(event: event)
+                        if event.id != events.last?.id {
                             Divider()
                                 .padding(.leading, 52)
                         }
@@ -130,41 +129,6 @@ struct SessionDetailView: View {
                 .background(Color(.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-        }
-    }
-
-    // MARK: - Metrics
-
-    @ViewBuilder
-    private var metricsSection: some View {
-        if let usage = session.usage {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Usage")
-                    .font(.headline)
-
-                VStack(spacing: 8) {
-                    metricRow("Input Tokens", value: "\(usage.inputTokens)")
-                    metricRow("Output Tokens", value: "\(usage.outputTokens)")
-                    metricRow("Cache Read", value: "\(usage.cacheReadTokens)")
-                    metricRow("Cache Write", value: "\(usage.cacheWriteTokens)")
-                    Divider()
-                    metricRow("Total Cost", value: String(format: "$%.4f", usage.totalCost))
-                }
-                .padding()
-                .background(Color(.secondarySystemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-        }
-    }
-
-    private func metricRow(_ label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Spacer()
-            Text(value)
-                .font(.subheadline.monospacedDigit())
         }
     }
 
@@ -191,13 +155,13 @@ struct SessionDetailView: View {
 
     @MainActor
     private func loadJournal() async {
-        isLoadingSteps = true
+        isLoadingEvents = true
         do {
-            steps = try await client.getSessionJournal(id: session.id)
+            events = try await client.getSessionJournal(id: session.id)
         } catch {
-            // Steps remain empty on failure
+            // Events remain empty on failure
         }
-        isLoadingSteps = false
+        isLoadingEvents = false
     }
 }
 
@@ -210,17 +174,8 @@ struct SessionDetailView: View {
                 id: "session-1",
                 task: "Refactor the authentication module to use modern async/await patterns",
                 state: .running,
-                plugin: "code-review",
                 createdAt: Date().addingTimeInterval(-3600),
-                updatedAt: Date(),
-                usage: UsageMetrics(
-                    inputTokens: 15000,
-                    outputTokens: 4200,
-                    cacheReadTokens: 8000,
-                    cacheWriteTokens: 1200,
-                    totalCost: 0.0521
-                ),
-                stepCount: 12
+                updatedAt: Date()
             ),
             client: KarnEvil9Client(serverConfig: .default)
         )

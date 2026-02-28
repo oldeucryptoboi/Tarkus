@@ -13,14 +13,14 @@ class SSEClient {
 
     private var task: Task<Void, Never>?
     private let baseURL: URL
-    private let token: String
+    private let token: String?
 
     /// Maximum delay in seconds for exponential backoff reconnection.
     private let maxReconnectDelay: TimeInterval = 30
 
     // MARK: - Initialization
 
-    init(baseURL: URL, token: String) {
+    init(baseURL: URL, token: String?) {
         self.baseURL = baseURL
         self.token = token
     }
@@ -29,7 +29,7 @@ class SSEClient {
     /// and Keychain.
     convenience init(serverConfig: ServerConfig) {
         let url = serverConfig.baseURL ?? URL(string: "http://localhost:3100")!
-        let token = (try? KeychainService.getToken()) ?? ""
+        let token = try? KeychainService.getToken()
         self.init(baseURL: url, token: token)
     }
 
@@ -38,6 +38,9 @@ class SSEClient {
     /// Opens an SSE connection to the given session's stream endpoint and
     /// returns an `AsyncStream` of parsed events. The stream automatically
     /// reconnects with exponential backoff on disconnection.
+    ///
+    /// Event parsing reads the `"type"` field from inside the JSON data payload
+    /// rather than from the SSE `event:` line.
     func connect(sessionId: String) -> AsyncStream<KarnEvil9Event> {
         // Cancel any existing connection before starting a new one
         disconnect()
@@ -59,7 +62,9 @@ class SSEClient {
                         var request = URLRequest(url: url)
                         request.httpMethod = "GET"
                         request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
-                        request.setValue("Bearer \(self.token)", forHTTPHeaderField: "Authorization")
+                        if let token = self.token, !token.isEmpty {
+                            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                        }
 
                         if let lastId = self.lastEventId {
                             request.setValue(lastId, forHTTPHeaderField: "Last-Event-ID")
@@ -82,16 +87,13 @@ class SSEClient {
                         reconnectDelay = 1 // Reset backoff on successful connection
 
                         // SSE line-by-line parsing state
-                        var eventType: String?
                         var dataLines: [String] = []
                         var eventId: String?
 
                         for try await line in bytes.lines {
                             if Task.isCancelled { break }
 
-                            if line.hasPrefix("event:") {
-                                eventType = String(line.dropFirst(6)).trimmingCharacters(in: .whitespaces)
-                            } else if line.hasPrefix("data:") {
+                            if line.hasPrefix("data:") {
                                 let dataContent = String(line.dropFirst(5)).trimmingCharacters(in: .whitespaces)
                                 dataLines.append(dataContent)
                             } else if line.hasPrefix("id:") {
@@ -104,19 +106,17 @@ class SSEClient {
 
                                 if !dataLines.isEmpty {
                                     let combinedData = dataLines.joined(separator: "\n")
-                                    let event = KarnEvil9Event.parse(
-                                        eventType: eventType,
-                                        data: combinedData
-                                    )
+                                    // Parse event type from inside the JSON data
+                                    let event = KarnEvil9Event.parse(data: combinedData)
                                     continuation.yield(event)
                                 }
 
                                 // Reset parsing state for the next event
-                                eventType = nil
                                 dataLines = []
                                 eventId = nil
                             }
                             // Lines starting with ":" are comments — ignored
+                            // Lines starting with "event:" are ignored — type comes from JSON data
                         }
 
                     } catch is CancellationError {
