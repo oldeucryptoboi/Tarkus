@@ -42,6 +42,7 @@
 		98B5B2A75DAE887813279772 /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5242D4607A06C65A76EF631 /* DashboardViewModelTests.swift */; };
 		9B0E72D6B626492A45452485 /* ModelDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA213DD4A6C40BE5B107614 /* ModelDecodingTests.swift */; };
 		A05B853CB4BC41BC411D8656 /* SessionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035CCEE7B32CA429FFBB9F08 /* SessionHeaderView.swift */; };
+		B498C971C1B880B3472B674B /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 700CFDDAF7808C2E70670B47 /* MarkdownUI */; };
 		B6F9F166C577850D4851F11F /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134442F18EC7289E8F1CC7D9 /* KeychainService.swift */; };
 		C9058CD8975465C5A6B922FA /* SessionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67C21403C44C7C26D079C29 /* SessionListView.swift */; };
 		CAAD62C04C0F092CA261880A /* StepTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B6C76ED55C20578686CF2B /* StepTimelineView.swift */; };
@@ -120,6 +121,17 @@
 		F7B9B60A9F8068A0710D064E /* NewSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSessionView.swift; sourceTree = "<group>"; };
 		FB35B3780AF04DFAEA27F62C /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B73EDC6F714C9A7DC7D94408 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B498C971C1B880B3472B674B /* MarkdownUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0154163ECD1EBE6D8241B175 /* Chat */ = {
@@ -351,6 +363,7 @@
 				80BDB670D3B01689F0A158DA /* Sources */,
 				6416C6D24D607710CF0B04C6 /* Replace macOS icon with full icns */,
 				257B8DC16944D87F843C779B /* Resources */,
+				B73EDC6F714C9A7DC7D94408 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -358,6 +371,7 @@
 			);
 			name = Tarkus;
 			packageProductDependencies = (
+				700CFDDAF7808C2E70670B47 /* MarkdownUI */,
 			);
 			productName = Tarkus;
 			productReference = 3F7829AC92F774CEDE91B521 /* Tarkus.app */;
@@ -391,6 +405,9 @@
 			);
 			mainGroup = 8FE8E0DAF4A18AF5EF00D101;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				64444305A4F188F2E5FB2F43 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -742,6 +759,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		64444305A4F188F2E5FB2F43 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		700CFDDAF7808C2E70670B47 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 64444305A4F188F2E5FB2F43 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2845A559A93FB40082C15344 /* Project object */;
 }

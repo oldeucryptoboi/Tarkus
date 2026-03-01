@@ -15,12 +15,19 @@ settings:
     ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: "YES"
     DEVELOPMENT_TEAM: "ZS56LL5S52"
 
+packages:
+  MarkdownUI:
+    url: https://github.com/gonzalezreal/swift-markdown-ui
+    from: "2.2.0"
+
 targets:
   Tarkus:
     type: application
     supportedDestinations: [iOS, macOS]
     sources:
       - path: Tarkus
+    dependencies:
+      - package: MarkdownUI
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.artivisual.Tarkus
