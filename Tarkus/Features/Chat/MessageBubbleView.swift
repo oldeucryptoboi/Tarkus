@@ -78,7 +78,7 @@ struct MessageBubbleView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.red)
                         } else {
-                            Text(message.text)
+                            Text(markdownAttributedString(message.text))
                                 .font(.body)
                                 .textSelection(.enabled)
                         }
@@ -213,6 +213,12 @@ struct MessageBubbleView: View {
     }
 
     // MARK: - Helpers
+
+    /// Parses a Markdown string into an `AttributedString`, falling back to
+    /// plain text if parsing fails.
+    private func markdownAttributedString(_ text: String) -> AttributedString {
+        (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(text)
+    }
 
     @ViewBuilder
     private func stepStatusIcon(_ status: StepInfo.StepStatus) -> some View {
