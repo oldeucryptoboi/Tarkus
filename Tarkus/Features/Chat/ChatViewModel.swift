@@ -263,24 +263,33 @@ class ChatViewModel {
     }
 
     /// Extracts meaningful text from a step.succeeded event's output payload.
+    /// Returns `nil` for structured/dictionary outputs that have no human-readable text,
+    /// preventing "N fields" placeholders from leaking into the UI.
     private func extractStepOutput(from event: JournalEvent) -> String? {
         guard let payload = event.payload else { return nil }
 
-        // Check for nested output object (e.g. respond tool: { output: { text: "..." } })
-        if let outputDict = payload["output"]?.dictionaryValue {
-            if let text = outputDict["text"]?.stringValue {
-                return text
-            }
-            if let message = outputDict["message"]?.stringValue {
-                return message
-            }
-            if let result = outputDict["result"]?.stringValue {
-                return result
-            }
+        // Check for direct string output
+        if let outputString = payload["output"]?.stringValue {
+            return outputString
         }
 
-        // Fall back to payloadSummary
-        return event.payloadSummary
+        // Check for nested output object (e.g. respond tool: { output: { text: "..." } })
+        if let outputDict = payload["output"]?.dictionaryValue {
+            if let text = outputDict["text"]?.stringValue { return text }
+            if let message = outputDict["message"]?.stringValue { return message }
+            if let result = outputDict["result"]?.stringValue { return result }
+            if let content = outputDict["content"]?.stringValue { return content }
+            // Structured output with no readable text — return nil
+            return nil
+        }
+
+        // Check top-level text fields
+        if let text = payload["text"]?.stringValue { return text }
+        if let result = payload["result"]?.stringValue { return result }
+        if let message = payload["message"]?.stringValue { return message }
+
+        // No readable text found — return nil rather than "N fields"
+        return nil
     }
 
     private func handlePlannerEvent(_ event: JournalEvent, messageIndex: Int) {
