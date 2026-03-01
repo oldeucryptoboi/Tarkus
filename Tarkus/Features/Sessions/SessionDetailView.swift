@@ -28,7 +28,9 @@ struct SessionDetailView: View {
             .padding()
         }
         .navigationTitle("Session")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .task {
             await loadJournal()
         }
@@ -70,7 +72,7 @@ struct SessionDetailView: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Color.secondaryGroupedBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
@@ -126,7 +128,7 @@ struct SessionDetailView: View {
                         }
                     }
                 }
-                .background(Color(.secondarySystemGroupedBackground))
+                .background(Color.secondaryGroupedBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }

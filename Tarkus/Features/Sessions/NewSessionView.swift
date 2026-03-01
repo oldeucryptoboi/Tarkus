@@ -62,7 +62,9 @@ struct NewSessionView: View {
                 }
             }
             .navigationTitle("New Session")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {

@@ -69,7 +69,9 @@ struct SessionListView: View {
                 sessionRow(session)
             }
         }
+        #if os(iOS)
         .listStyle(.insetGrouped)
+        #endif
     }
 
     // MARK: - Row

@@ -42,7 +42,7 @@
 	<string>Tarkus uses the local network to discover and communicate with KarnEvil9 servers.</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_karnevil9._tcp</string>
+		<string>_karnevil9._tcp.</string>
 	</array>
 </dict>
 </plist>

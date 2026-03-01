@@ -20,7 +20,7 @@ struct MetricsBarView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Color.secondaryGroupedBackground)
     }
 
     // MARK: - Components

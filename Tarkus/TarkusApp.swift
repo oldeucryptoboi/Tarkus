@@ -1,5 +1,7 @@
 import SwiftUI
+#if os(iOS)
 import UserNotifications
+#endif
 
 // MARK: - TarkusApp
 
@@ -7,21 +9,24 @@ import UserNotifications
 ///
 /// On launch the app checks for a previously saved `ServerConfig` and
 /// Keychain token. If both exist it creates a `KarnEvil9Client` and
-/// presents the main tab interface; otherwise it shows the first-run
-/// connection setup screen.
+/// `WebSocketClient`, then presents the main tab interface; otherwise
+/// it shows the first-run connection setup screen.
 @main
 struct TarkusApp: App {
 
     // MARK: - State
 
     @State private var client: KarnEvil9Client?
+    @State private var webSocket = WebSocketClient()
     @State private var isConfigured: Bool = false
     @State private var appRouter = AppRouter()
     @State private var notificationService = NotificationService()
 
     // MARK: - App Delegate
 
+    #if os(iOS)
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    #endif
 
     // MARK: - Initialization
 
@@ -42,12 +47,14 @@ struct TarkusApp: App {
         WindowGroup {
             Group {
                 if isConfigured, let client {
-                    AppTabView(client: client)
+                    AppTabView(client: client, webSocket: webSocket)
                         .environment(appRouter)
                         .environment(notificationService)
                         .onAppear {
+                            #if os(iOS)
                             // Share the router with the app delegate for notification routing.
                             appDelegate.appRouter = appRouter
+                            #endif
                             // Register notification actions and request permission.
                             notificationService.registerActions()
                             Task {
@@ -69,6 +76,7 @@ struct TarkusApp: App {
     }
 }
 
+#if os(iOS)
 // MARK: - AppDelegate
 
 /// UIKit app delegate used to handle notification center delegate callbacks
@@ -112,3 +120,4 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([.banner, .badge, .sound])
     }
 }
+#endif

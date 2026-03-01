@@ -25,7 +25,9 @@ struct DashboardView: View {
                 }
             }
             .navigationTitle("Dashboard")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 if viewModel.currentSession != nil {
                     ToolbarItemGroup(placement: .primaryAction) {

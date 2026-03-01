@@ -74,17 +74,23 @@ struct ConnectionSetupView: View {
                     TextField("Host (e.g. 192.168.1.50)", text: $viewModel.host)
                         .textContentType(.URL)
                         .autocorrectionDisabled()
+                        #if os(iOS)
                         .textInputAutocapitalization(.never)
+                        #endif
 
                     TextField("Port", text: $viewModel.port)
+                        #if os(iOS)
                         .keyboardType(.asciiCapableNumberPad)
+                        #endif
                 }
 
                 Section {
                     SecureField("API Token", text: $viewModel.token)
                         .textContentType(.password)
                         .autocorrectionDisabled()
+                        #if os(iOS)
                         .textInputAutocapitalization(.never)
+                        #endif
                 } header: {
                     Text("Authentication")
                 } footer: {
@@ -139,7 +145,9 @@ struct ConnectionSetupView: View {
                 }
             }
             .navigationTitle("Setup")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .task {
                 viewModel.startDiscovery()
             }

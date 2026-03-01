@@ -44,7 +44,7 @@ enum KarnEvil9Event {
 
     /// Categorizes a `JournalEvent` into the appropriate enum case based on
     /// its dot-notation type prefix.
-    private static func categorize(_ event: JournalEvent) -> KarnEvil9Event {
+    static func categorize(_ event: JournalEvent) -> KarnEvil9Event {
         let type = event.type
 
         if type.hasPrefix("session.") {

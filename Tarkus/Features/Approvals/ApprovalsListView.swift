@@ -77,7 +77,9 @@ struct ApprovalsListView: View {
                 }
             }
         }
+        #if os(iOS)
         .listStyle(.insetGrouped)
+        #endif
     }
 
     // MARK: - Row

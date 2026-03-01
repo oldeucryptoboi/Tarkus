@@ -13,6 +13,12 @@ enum DeepLink: Equatable {
 
 /// Central navigation coordinator that manages tab selection, badge counts,
 /// and deep-link routing from push/local notifications.
+///
+/// Tab indices:
+/// - 0: Chat
+/// - 1: Activity (Sessions)
+/// - 2: Approvals
+/// - 3: Settings
 @Observable
 class AppRouter {
 
@@ -35,14 +41,14 @@ class AppRouter {
     /// Expected keys:
     /// - `"approvalId"`: routes to the Approvals tab with a deep link to the
     ///   specific approval.
-    /// - `"sessionId"`: routes to the Sessions tab with a deep link to the
+    /// - `"sessionId"`: routes to the Activity tab with a deep link to the
     ///   specific session.
     func handleNotification(userInfo: [AnyHashable: Any]) {
         if let approvalId = userInfo["approvalId"] as? String {
-            selectedTab = 1
+            selectedTab = 2
             pendingDeepLink = .approval(id: approvalId)
         } else if let sessionId = userInfo["sessionId"] as? String {
-            selectedTab = 2
+            selectedTab = 1
             pendingDeepLink = .session(id: sessionId)
         }
     }
@@ -53,10 +59,10 @@ class AppRouter {
     func navigate(to deepLink: DeepLink) {
         switch deepLink {
         case .approval:
-            selectedTab = 1
+            selectedTab = 2
             pendingDeepLink = deepLink
         case .session:
-            selectedTab = 2
+            selectedTab = 1
             pendingDeepLink = deepLink
         }
     }

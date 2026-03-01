@@ -91,6 +91,12 @@ struct JournalEvent: Codable, Identifiable, Equatable {
         if let message = payload["message"]?.stringValue {
             return message
         }
+        if let reason = payload["reason"]?.stringValue {
+            return reason
+        }
+        if let error = payload["error"]?.stringValue {
+            return error
+        }
         if let plan = payload["plan"]?.stringValue {
             return plan
         }

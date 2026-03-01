@@ -27,7 +27,9 @@ struct ApprovalDetailView: View {
             .padding()
         }
         .navigationTitle(approval.permission.tool)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
     }
 
     // MARK: - Tool Info
@@ -79,7 +81,7 @@ struct ApprovalDetailView: View {
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.tertiarySystemGroupedBackground))
+                .background(Color.tertiaryGroupedBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             }
         }
@@ -144,8 +146,10 @@ struct ApprovalDetailView: View {
         icon: String
     ) -> some View {
         Button {
+            #if os(iOS)
             let generator = UIImpactFeedbackGenerator(style: .medium)
             generator.impactOccurred()
+            #endif
             Task {
                 try? await viewModel.submitDecision(
                     approvalId: approval.id,
