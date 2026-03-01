@@ -48,11 +48,10 @@ struct MessageBubbleView: View {
     private var assistantBubble: some View {
         HStack(alignment: .top, spacing: 8) {
             // EDDIE avatar
-            Image(systemName: "brain.head.profile")
-                .font(.title3)
-                .foregroundStyle(.purple)
+            Image("EddieAvatar")
+                .resizable()
+                .scaledToFill()
                 .frame(width: 32, height: 32)
-                .background(Color.purple.opacity(0.15))
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 8) {
