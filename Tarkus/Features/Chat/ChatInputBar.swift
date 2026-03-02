@@ -31,6 +31,7 @@ struct ChatInputBar: View {
 
                 // Text field
                 TextField("Ask EDDIE...", text: $text, axis: .vertical)
+                    .font(.system(size: 14))
                     .lineLimit(1...6)
                     .textFieldStyle(.plain)
                     .focused($isFocused)

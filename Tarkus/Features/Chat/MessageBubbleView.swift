@@ -7,6 +7,13 @@ import SwiftUI
 /// with an avatar, step activity disclosure, and inline approval cards.
 struct MessageBubbleView: View {
 
+    // MARK: - Font Sizes (match MarkdownOptions body = 14pt)
+
+    private static let bodySize: CGFloat = 14
+    private static let secondarySize: CGFloat = 13
+    private static let captionSize: CGFloat = 12
+    private static let smallCaptionSize: CGFloat = 11
+
     // MARK: - Properties
 
     let message: ChatMessage
@@ -32,7 +39,7 @@ struct MessageBubbleView: View {
             Spacer(minLength: 60)
 
             Text(message.text)
-                .font(.body)
+                .font(.system(size: Self.bodySize))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(Color.secondary.opacity(0.2))
@@ -69,14 +76,14 @@ struct MessageBubbleView: View {
                 if !message.text.isEmpty {
                     if message.status == .failed {
                         Label(message.text, systemImage: "exclamationmark.triangle")
-                            .font(.subheadline)
+                            .font(.system(size: Self.secondarySize))
                             .foregroundStyle(.red)
                     } else {
                         MarkdownText(content: message.text)
                     }
                 } else if message.status == .failed {
                     Label("Something went wrong", systemImage: "exclamationmark.triangle")
-                        .font(.subheadline)
+                        .font(.system(size: Self.secondarySize))
                         .foregroundStyle(.red)
                 }
 
@@ -96,7 +103,7 @@ struct MessageBubbleView: View {
         HStack {
             Spacer()
             Text(message.text)
-                .font(.caption)
+                .font(.system(size: Self.smallCaptionSize))
                 .foregroundStyle(.secondary)
                 .padding(.vertical, 4)
             Spacer()
@@ -109,7 +116,7 @@ struct MessageBubbleView: View {
     private var thinkingIndicator: some View {
         HStack(spacing: 4) {
             Text("EDDIE is thinking")
-                .font(.subheadline)
+                .font(.system(size: Self.secondarySize))
                 .foregroundStyle(.secondary)
 
             ThinkingDotsView()
@@ -127,11 +134,11 @@ struct MessageBubbleView: View {
                             .frame(width: 16, height: 16)
 
                         Text(step.tool)
-                            .font(.caption.weight(.semibold))
+                            .font(.system(size: Self.captionSize, weight: .semibold))
 
                         if let output = step.output {
                             Text(output)
-                                .font(.caption)
+                                .font(.system(size: Self.captionSize))
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
                         }
@@ -142,7 +149,7 @@ struct MessageBubbleView: View {
         } label: {
             HStack(spacing: 4) {
                 Text("\(message.steps.count) step\(message.steps.count == 1 ? "" : "s")")
-                    .font(.caption.weight(.medium))
+                    .font(.system(size: Self.captionSize, weight: .medium))
                     .foregroundStyle(.secondary)
 
                 if message.steps.contains(where: { $0.status == .running }) {
@@ -151,7 +158,7 @@ struct MessageBubbleView: View {
                 }
             }
         }
-        .font(.caption)
+        .font(.system(size: Self.captionSize))
     }
 
     // MARK: - Approval Card
@@ -162,11 +169,11 @@ struct MessageBubbleView: View {
                 Image(systemName: "hand.raised.circle.fill")
                     .foregroundStyle(.orange)
                 Text("Permission Required")
-                    .font(.subheadline.weight(.semibold))
+                    .font(.system(size: Self.bodySize, weight: .semibold))
             }
 
             Text("\(approval.tool): \(approval.description)")
-                .font(.caption)
+                .font(.system(size: Self.captionSize))
                 .foregroundStyle(.secondary)
 
             HStack(spacing: 8) {
@@ -174,7 +181,7 @@ struct MessageBubbleView: View {
                     onApproval?(approval.id, .allowOnce)
                 } label: {
                     Label("Allow", systemImage: "checkmark.circle")
-                        .font(.caption.weight(.semibold))
+                        .font(.system(size: Self.captionSize, weight: .semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                 }
@@ -185,7 +192,7 @@ struct MessageBubbleView: View {
                     onApproval?(approval.id, .denyOnce)
                 } label: {
                     Label("Deny", systemImage: "xmark.circle")
-                        .font(.caption.weight(.semibold))
+                        .font(.system(size: Self.captionSize, weight: .semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                 }
@@ -209,11 +216,11 @@ struct MessageBubbleView: View {
         case .succeeded:
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(.green)
-                .font(.caption2)
+                .font(.system(size: Self.smallCaptionSize))
         case .failed:
             Image(systemName: "xmark.circle.fill")
                 .foregroundStyle(.red)
-                .font(.caption2)
+                .font(.system(size: Self.smallCaptionSize))
         }
     }
 }
