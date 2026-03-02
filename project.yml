@@ -16,9 +16,12 @@ settings:
     DEVELOPMENT_TEAM: "ZS56LL5S52"
 
 packages:
-  MarkdownUI:
-    url: https://github.com/gonzalezreal/swift-markdown-ui
-    from: "2.2.0"
+  swift-markdown:
+    url: https://github.com/swiftlang/swift-markdown
+    from: "0.5.0"
+  Highlightr:
+    url: https://github.com/raspu/Highlightr
+    from: "2.2.1"
 
 targets:
   Tarkus:
@@ -27,7 +30,9 @@ targets:
     sources:
       - path: Tarkus
     dependencies:
-      - package: MarkdownUI
+      - package: swift-markdown
+        product: Markdown
+      - package: Highlightr
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.artivisual.Tarkus

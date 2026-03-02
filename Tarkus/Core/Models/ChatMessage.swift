@@ -27,6 +27,8 @@ struct ChatMessage: Identifiable {
     enum Status {
         case sending
         case thinking
+        /// EDDIE's response text is arriving — shows markdown with typing dot.
+        case streaming
         case completed
         case failed
     }

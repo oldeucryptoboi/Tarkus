@@ -16,11 +16,12 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
+            List {
                 connectionSection
                 serverHealthSection
-                toolsSection
+                debugSection
                 aboutSection
+                toolsSection
             }
             .navigationTitle("Settings")
             .task {
@@ -109,23 +110,37 @@ struct SettingsView: View {
     // MARK: - Tools Section
 
     private var toolsSection: some View {
-        Section("Available Tools") {
-            if viewModel.tools.isEmpty {
-                Text("No tools loaded")
-                    .foregroundStyle(.secondary)
-            } else {
-                ForEach(viewModel.tools) { tool in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(tool.name)
-                            .font(.subheadline.weight(.medium))
-                        if let description = tool.description {
-                            Text(description)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(2)
+        Section {
+            NavigationLink {
+                List {
+                    if viewModel.tools.isEmpty {
+                        Text("No tools loaded")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(viewModel.tools) { tool in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(tool.name)
+                                    .font(.subheadline.weight(.medium))
+                                if let description = tool.description {
+                                    Text(description)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(2)
+                                }
+                            }
+                            .padding(.vertical, 2)
                         }
                     }
-                    .padding(.vertical, 2)
+                }
+                .navigationTitle("Available Tools")
+            } label: {
+                Label {
+                    Text("Available Tools")
+                    Spacer()
+                    Text("\(viewModel.tools.count)")
+                        .foregroundStyle(.secondary)
+                } icon: {
+                    Image(systemName: "wrench.and.screwdriver")
                 }
             }
         }
@@ -149,6 +164,18 @@ struct SettingsView: View {
                 Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    // MARK: - Debug Section
+
+    private var debugSection: some View {
+        Section("Debug") {
+            NavigationLink {
+                MarkdownTestView()
+            } label: {
+                Label("Markdown A/B Test", systemImage: "doc.richtext")
             }
         }
     }

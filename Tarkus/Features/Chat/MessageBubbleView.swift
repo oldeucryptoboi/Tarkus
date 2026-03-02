@@ -1,4 +1,3 @@
-import MarkdownUI
 import SwiftUI
 
 // MARK: - MessageBubbleView
@@ -34,77 +33,61 @@ struct MessageBubbleView: View {
 
             Text(message.text)
                 .font(.body)
-                .padding(12)
-                .background(Color.blue)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color.secondary.opacity(0.2))
+                .foregroundStyle(.primary)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 4)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
     }
 
     // MARK: - Assistant Bubble
 
     private var assistantBubble: some View {
-        HStack(alignment: .top, spacing: 8) {
-            // EDDIE avatar
-            Image("EddieAvatar")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 32, height: 32)
-                .clipShape(Circle())
+        VStack(alignment: .leading, spacing: 8) {
+            if message.status == .thinking {
+                thinkingIndicator
 
-            VStack(alignment: .leading, spacing: 8) {
-                if message.status == .thinking {
-                    // Ephemeral thinking indicator — replaced by outcome
-                    thinkingIndicator
+                if !message.steps.isEmpty {
+                    stepsDisclosure
+                }
 
-                    // Show steps while thinking
-                    if !message.steps.isEmpty {
-                        stepsDisclosure
-                    }
+                if let approval = message.approval, !approval.isResolved {
+                    approvalCard(approval)
+                }
+            } else if message.status == .streaming {
+                if !message.text.isEmpty {
+                    MarkdownText(content: message.text, streaming: true)
+                }
 
-                    // Show approval card while thinking
-                    if let approval = message.approval, !approval.isResolved {
-                        approvalCard(approval)
-                    }
-                } else {
-                    // Final outcome — replaces the thinking state
-
-                    // Response or error text
-                    if !message.text.isEmpty {
-                        if message.status == .failed {
-                            Label(message.text, systemImage: "exclamationmark.triangle")
-                                .font(.subheadline)
-                                .foregroundStyle(.red)
-                        } else {
-                            Markdown(message.text)
-                                .markdownTheme(.gitHub)
-                                .markdownTextStyle {
-                                    FontSize(.em(0.95))
-                                }
-                                .textSelection(.enabled)
-                        }
-                    } else if message.status == .failed {
-                        Label("Something went wrong", systemImage: "exclamationmark.triangle")
+                if !message.steps.isEmpty {
+                    stepsDisclosure
+                }
+            } else {
+                if !message.text.isEmpty {
+                    if message.status == .failed {
+                        Label(message.text, systemImage: "exclamationmark.triangle")
                             .font(.subheadline)
                             .foregroundStyle(.red)
+                    } else {
+                        MarkdownText(content: message.text)
                     }
+                } else if message.status == .failed {
+                    Label("Something went wrong", systemImage: "exclamationmark.triangle")
+                        .font(.subheadline)
+                        .foregroundStyle(.red)
+                }
 
-                    // Collapsible steps in final state
-                    if !message.steps.isEmpty {
-                        stepsDisclosure
-                    }
+                if !message.steps.isEmpty {
+                    stepsDisclosure
                 }
             }
-            .padding(12)
-            .background(Color.secondaryGroupedBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 18))
-
-            Spacer(minLength: 40)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
     }
 
     // MARK: - System Bubble

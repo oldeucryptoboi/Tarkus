@@ -247,8 +247,16 @@ class ChatViewModel {
             })
             if let stepIndex {
                 messages[messageIndex].steps[stepIndex].status = .succeeded
-                // Extract output text from nested output object
-                messages[messageIndex].steps[stepIndex].output = extractStepOutput(from: event)
+                let output = extractStepOutput(from: event)
+                messages[messageIndex].steps[stepIndex].output = output
+
+                // When the respond tool delivers text, transition to streaming
+                // so the user sees the response with a typing dot while the session finishes.
+                if tool == "respond", let text = output, !text.isEmpty,
+                   messages[messageIndex].status == .thinking {
+                    messages[messageIndex].text = text
+                    messages[messageIndex].status = .streaming
+                }
             }
         } else if type == "step.failed" {
             let stepIndex = messages[messageIndex].steps.lastIndex(where: {
