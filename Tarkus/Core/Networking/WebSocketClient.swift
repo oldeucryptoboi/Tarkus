@@ -1,4 +1,7 @@
 import Foundation
+import os.log
+
+private let wsLog = Logger(subsystem: "com.artivisual.Tarkus", category: "WebSocket")
 
 // MARK: - WebSocket Message Types
 
@@ -78,6 +81,7 @@ class WebSocketClient {
     /// Connects to the WebSocket endpoint and returns an `AsyncStream` of
     /// inbound messages. Automatically reconnects with exponential backoff.
     func connect(baseURL: URL, token: String?) -> AsyncStream<WSMessage> {
+        NSLog("[WS] connect() called — baseURL=%@", baseURL.absoluteString)
         disconnect()
 
         self.baseURL = baseURL
@@ -97,6 +101,7 @@ class WebSocketClient {
 
     /// Disconnects the WebSocket and stops reconnection attempts.
     func disconnect() {
+        wsLog.notice("Disconnecting (shouldReconnect was \(self.shouldReconnect))")
         shouldReconnect = false
         receiveTask?.cancel()
         receiveTask = nil
@@ -116,27 +121,36 @@ class WebSocketClient {
 
     /// Sends an outbound message over the WebSocket connection.
     func send(_ message: WSMessage) {
-        guard let webSocketTask, webSocketTask.state == .running else { return }
+        guard let webSocketTask, webSocketTask.state == .running else {
+            wsLog.warning("Send failed — task not running (state=\(self.webSocketTask?.state.rawValue ?? -1))")
+            return
+        }
 
         let json: [String: Any]
         switch message {
         case .submit(let text):
             json = ["type": "submit", "text": text]
+            wsLog.notice("Sending submit: \(String(text.prefix(80)), privacy: .public)")
         case .abort(let sessionId):
             json = ["type": "abort", "session_id": sessionId]
+            wsLog.notice("Sending abort: session=\(sessionId, privacy: .public)")
         case .approve(let requestId, let decision):
             json = ["type": "approve", "request_id": requestId, "decision": decision.rawValue]
+            wsLog.notice("Sending approve: request=\(requestId, privacy: .public) decision=\(decision.rawValue, privacy: .public)")
         case .ping:
             json = ["type": "ping"]
         default:
             return // Inbound-only messages cannot be sent
         }
 
-        guard let data = try? JSONSerialization.data(withJSONObject: json) else { return }
+        guard let data = try? JSONSerialization.data(withJSONObject: json) else {
+            wsLog.error("Send failed — JSON serialization error")
+            return
+        }
 
         webSocketTask.send(.string(String(data: data, encoding: .utf8) ?? "")) { error in
-            if error != nil {
-                // Send failed — connection may have dropped
+            if let error {
+                wsLog.error("Send failed — \(error.localizedDescription, privacy: .public)")
             }
         }
     }
@@ -144,7 +158,10 @@ class WebSocketClient {
     // MARK: - Private
 
     private func performConnect() {
-        guard let baseURL, shouldReconnect else { return }
+        guard let baseURL, shouldReconnect else {
+            wsLog.warning("performConnect skipped (baseURL=\(self.baseURL?.absoluteString ?? "nil", privacy: .public), shouldReconnect=\(self.shouldReconnect))")
+            return
+        }
 
         // Build ws:// or wss:// URL from the http:// base URL
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
@@ -157,9 +174,12 @@ class WebSocketClient {
         }
 
         guard let wsURL = components?.url else {
+            wsLog.error("performConnect failed — invalid URL")
             continuation?.yield(.error(message: "Invalid WebSocket URL"))
             return
         }
+
+        wsLog.notice("Connecting to \(wsURL.host ?? "?", privacy: .public)/\(wsURL.path, privacy: .public)")
 
         let request = URLRequest(url: wsURL)
 
@@ -183,7 +203,10 @@ class WebSocketClient {
             var reconnectDelay: TimeInterval = 1
 
             while !Task.isCancelled {
-                guard let webSocketTask = self.webSocketTask else { break }
+                guard let webSocketTask = self.webSocketTask else {
+                    wsLog.warning("Receive loop exiting — webSocketTask is nil")
+                    break
+                }
 
                 do {
                     let message = try await webSocketTask.receive()
@@ -195,6 +218,7 @@ class WebSocketClient {
 
                     switch message {
                     case .string(let text):
+                        NSLog("[WS] Received raw: %@", String(text.prefix(200)))
                         let wsMessage = self.parseInbound(text)
                         self.continuation?.yield(wsMessage)
 
@@ -202,20 +226,27 @@ class WebSocketClient {
                         if let text = String(data: data, encoding: .utf8) {
                             let wsMessage = self.parseInbound(text)
                             self.continuation?.yield(wsMessage)
+                        } else {
+                            wsLog.warning("Received binary data that could not be decoded as UTF-8 (\(data.count) bytes)")
                         }
 
                     @unknown default:
+                        wsLog.warning("Received unknown message type")
                         break
                     }
                 } catch {
-                    // Connection dropped
+                    NSLog("[WS] Connection dropped — %@", error.localizedDescription)
+
                     await MainActor.run {
                         self.isConnected = false
                     }
 
-                    guard self.shouldReconnect, !Task.isCancelled else { break }
+                    guard self.shouldReconnect, !Task.isCancelled else {
+                        wsLog.notice("Not reconnecting (shouldReconnect=\(self.shouldReconnect), cancelled=\(Task.isCancelled))")
+                        break
+                    }
 
-                    // Exponential backoff reconnect
+                    wsLog.notice("Reconnecting in \(Int(reconnectDelay))s")
                     try? await Task.sleep(nanoseconds: UInt64(reconnectDelay * 1_000_000_000))
                     reconnectDelay = min(reconnectDelay * 2, self.maxReconnectDelay)
 
@@ -231,8 +262,8 @@ class WebSocketClient {
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: UInt64((self?.pingInterval ?? 30) * 1_000_000_000))
                 self?.webSocketTask?.sendPing { error in
-                    if error != nil {
-                        // Ping failed — connection may have dropped
+                    if let error {
+                        wsLog.warning("Ping failed — \(error.localizedDescription, privacy: .public)")
                     }
                 }
             }
@@ -246,6 +277,7 @@ class WebSocketClient {
         guard let data = text.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let type = json["type"] as? String else {
+            wsLog.error("Parse failed — invalid JSON or missing type: \(String(text.prefix(200)), privacy: .public)")
             return .error(message: "Unable to parse WebSocket message")
         }
 
@@ -257,6 +289,7 @@ class WebSocketClient {
         // Handle server error
         if type == "error" {
             let message = json["message"] as? String ?? "Unknown error"
+            wsLog.error("Server error: \(message, privacy: .public)")
             return .error(message: message)
         }
 
@@ -273,6 +306,7 @@ class WebSocketClient {
                let parsed = try? JSONDecoder().decode(JournalEvent.self, from: eventJson) {
                 event = parsed
             } else {
+                wsLog.error("JournalEvent decode failed for inner event type=\(innerEventType ?? "?", privacy: .public) session=\(sessionId, privacy: .public) — payload lost")
                 // Inner event exists but failed full decode — use its type
                 event = JournalEvent(
                     eventId: (eventData["event_id"] as? String) ?? UUID().uuidString,
@@ -285,6 +319,7 @@ class WebSocketClient {
             event = parsed
             innerEventType = nil
         } else {
+            wsLog.error("JournalEvent decode failed for outer type=\(type, privacy: .public) session=\(sessionId, privacy: .public)")
             innerEventType = nil
             event = JournalEvent(
                 eventId: UUID().uuidString,
@@ -297,17 +332,13 @@ class WebSocketClient {
         // Use the inner event type when the outer type is just "event".
         let effectiveType = (type == "event") ? (innerEventType ?? event.type) : type
 
-        switch effectiveType {
-        case "session.created":
+        NSLog("[WS] Parsed: type=%@ effective=%@ session=%@ hasPayload=%d", type, effectiveType, sessionId, event.payload != nil ? 1 : 0)
+
+        // session.created needs special handling (creates thinking bubble),
+        // everything else routes through .event → KarnEvil9Event.categorize()
+        if effectiveType == "session.created" {
             return .sessionCreated(sessionId: sessionId, event: event)
-        case "session.completed":
-            return .sessionCompleted(sessionId: sessionId, event: event)
-        case "session.failed":
-            return .sessionFailed(sessionId: sessionId, event: event)
-        case "session.aborted":
-            return .sessionAborted(sessionId: sessionId, event: event)
-        default:
-            return .event(sessionId: sessionId, event: event)
         }
+        return .event(sessionId: sessionId, event: event)
     }
 }

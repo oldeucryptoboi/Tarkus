@@ -1,4 +1,7 @@
 import Foundation
+import os.log
+
+private let chatLog = Logger(subsystem: "com.artivisual.Tarkus", category: "Chat")
 
 // MARK: - ChatViewModel
 
@@ -34,19 +37,35 @@ class ChatViewModel {
     // MARK: - Connection
 
     /// Connects to the WebSocket and begins listening for events.
+    /// Idempotent — does nothing if already connected or a stream task is active.
     func connect() {
-        guard let baseURL = client.serverConfig.baseURL else { return }
+        guard streamTask == nil else {
+            NSLog("[Chat] connect() — streamTask already exists, skipping")
+            return
+        }
+        guard let baseURL = client.serverConfig.baseURL else {
+            NSLog("[Chat] connect() — no baseURL")
+            return
+        }
+        NSLog("[Chat] connect() — connecting to %@", baseURL.absoluteString)
         let token = try? KeychainService.getToken()
 
         let stream = webSocket.connect(baseURL: baseURL, token: token)
 
         streamTask = Task { [weak self] in
+            NSLog("[Chat] streamTask started — awaiting messages")
             for await message in stream {
-                guard let self, !Task.isCancelled else { break }
+                guard let self, !Task.isCancelled else {
+                    NSLog("[Chat] streamTask — self nil or cancelled")
+                    break
+                }
                 self.isConnected = self.webSocket.isConnected
                 self.handleWSMessage(message)
             }
-            self?.isConnected = false
+            NSLog("[Chat] streamTask ended")
+            guard let self else { return }
+            self.isConnected = false
+            self.streamTask = nil
         }
     }
 
@@ -70,10 +89,11 @@ class ChatViewModel {
         inputText = ""
 
         if isConnected {
+            chatLog.notice("Sending via WebSocket: \(String(text.prefix(80)), privacy: .public)")
             awaitingSessionForSubmit = true
             webSocket.send(.submit(text: text))
         } else {
-            // Fallback: create session via REST
+            chatLog.warning("Sending via REST fallback (WS not connected): \(String(text.prefix(80)), privacy: .public)")
             Task {
                 await sendViaREST(text: text, userMessageId: userMessage.id)
             }
@@ -164,20 +184,35 @@ class ChatViewModel {
     // MARK: - WebSocket Event Handling
 
     private func handleWSMessage(_ wsMessage: WSMessage) {
+        NSLog("[Chat] handleWSMessage: %@", String(String(describing: wsMessage).prefix(300)))
         switch wsMessage {
         case .sessionCreated(let sessionId, _):
             // Only create a thinking bubble if this session was initiated by the user
-            guard awaitingSessionForSubmit else { break }
-            guard findAssistantMessage(for: sessionId) == nil else { break }
+            guard awaitingSessionForSubmit else {
+                chatLog.notice("Ignoring session.created \(sessionId, privacy: .public) — not awaiting submit")
+                break
+            }
+            guard findAssistantMessage(for: sessionId) == nil else {
+                chatLog.notice("Ignoring session.created \(sessionId, privacy: .public) — assistant message already exists")
+                break
+            }
             awaitingSessionForSubmit = false
             chatSessionIds.insert(sessionId)
             let assistantMessage = ChatMessage.assistantThinking(sessionId: sessionId)
             messages.append(assistantMessage)
+            chatLog.notice("Session created \(sessionId, privacy: .public) — thinking bubble added (tracked: \(self.chatSessionIds.count) sessions)")
 
         case .event(let sessionId, let event):
-            guard chatSessionIds.contains(sessionId) else { return }
-            guard let index = findAssistantMessage(for: sessionId) else { return }
+            guard chatSessionIds.contains(sessionId) else {
+                chatLog.debug("Dropping event \(event.type, privacy: .public) for untracked session \(sessionId, privacy: .public)")
+                return
+            }
+            guard let index = findAssistantMessage(for: sessionId) else {
+                chatLog.warning("Dropping event \(event.type, privacy: .public) — no assistant message for session \(sessionId, privacy: .public)")
+                return
+            }
             let karnevil9Event = KarnEvil9Event.categorize(event)
+            NSLog("[Chat] event type=%@ categorized=%@", event.type, String(String(describing: karnevil9Event).prefix(200)))
             switch karnevil9Event {
             case .stepEvent(let je):
                 handleStepEvent(je, messageIndex: index)
@@ -188,30 +223,48 @@ class ChatViewModel {
             case .sessionEvent(let je):
                 handleSessionEvent(je, messageIndex: index)
             case .error(let message):
+                chatLog.error("Event error for session \(sessionId, privacy: .public): \(message, privacy: .public)")
                 messages[index].status = .failed
                 messages[index].text = message
             case .unknown:
+                chatLog.debug("Unknown event type=\(event.type, privacy: .public) for session \(sessionId, privacy: .public)")
                 break
             }
 
         case .sessionCompleted(let sessionId, let event):
-            guard chatSessionIds.contains(sessionId) else { return }
-            guard let index = findAssistantMessage(for: sessionId) else { return }
+            guard chatSessionIds.contains(sessionId) else {
+                chatLog.warning("Dropping session.completed for untracked session \(sessionId, privacy: .public)")
+                return
+            }
+            guard let index = findAssistantMessage(for: sessionId) else {
+                chatLog.warning("Dropping session.completed — no assistant message for session \(sessionId, privacy: .public)")
+                return
+            }
+            chatLog.notice("Session completed \(sessionId, privacy: .public) — completing message at index \(index)")
             completeMessage(at: index, event: event)
 
         case .sessionFailed(let sessionId, let event):
-            guard chatSessionIds.contains(sessionId) else { return }
-            guard let index = findAssistantMessage(for: sessionId) else { return }
+            guard chatSessionIds.contains(sessionId) else {
+                chatLog.warning("Dropping session.failed for untracked session \(sessionId, privacy: .public)")
+                return
+            }
+            guard let index = findAssistantMessage(for: sessionId) else {
+                chatLog.warning("Dropping session.failed — no assistant message for session \(sessionId, privacy: .public)")
+                return
+            }
+            chatLog.error("Session failed \(sessionId, privacy: .public): \(event.payloadSummary ?? "?", privacy: .public)")
             messages[index].status = .failed
             messages[index].text = event.payloadSummary ?? "Session failed"
 
         case .sessionAborted(let sessionId, _):
             guard chatSessionIds.contains(sessionId) else { return }
             guard let index = findAssistantMessage(for: sessionId) else { return }
+            chatLog.notice("Session aborted \(sessionId, privacy: .public)")
             messages[index].status = .failed
             messages[index].text = "Session was aborted"
 
         case .error(let message):
+            chatLog.error("WS error message: \(message, privacy: .public)")
             messages.append(.system(message))
 
         case .pong, .submit, .abort, .approve, .ping:
@@ -222,11 +275,16 @@ class ChatViewModel {
     // MARK: - Event Processors
 
     private func handleStepEvent(_ event: JournalEvent, messageIndex: Int) {
-        guard messageIndex < messages.count else { return }
+        guard messageIndex < messages.count else {
+            chatLog.error("handleStepEvent — messageIndex \(messageIndex) out of bounds (count=\(self.messages.count))")
+            return
+        }
 
         let type = event.type
         let stepId = event.payload?["step_id"]?.stringValue ?? ""
         let tool = event.payload?["tool"]?.stringValue ?? "Unknown"
+
+        chatLog.notice("Step: \(type, privacy: .public) tool=\(tool, privacy: .public) stepId=\(stepId, privacy: .public) (msg status=\(String(describing: self.messages[messageIndex].status), privacy: .public))")
 
         if type == "step.started" {
             let title = event.payload?["title"]?.stringValue ?? tool
@@ -254,9 +312,14 @@ class ChatViewModel {
                 // so the user sees the response with a typing dot while the session finishes.
                 if tool == "respond", let text = output, !text.isEmpty,
                    messages[messageIndex].status == .thinking {
+                    chatLog.notice("Respond tool delivered \(text.count) chars — transitioning to streaming")
                     messages[messageIndex].text = text
                     messages[messageIndex].status = .streaming
+                } else if tool == "respond" {
+                    chatLog.warning("Respond tool completed but NO text extracted (output=\(output == nil ? "nil" : "empty", privacy: .public), status=\(String(describing: self.messages[messageIndex].status), privacy: .public))")
                 }
+            } else {
+                chatLog.warning("Step \(type, privacy: .public) completed but no matching running step (stepId=\(stepId, privacy: .public), tool=\(tool, privacy: .public))")
             }
         } else if type == "step.failed" {
             let stepIndex = messages[messageIndex].steps.lastIndex(where: {
@@ -266,6 +329,9 @@ class ChatViewModel {
             if let stepIndex {
                 messages[messageIndex].steps[stepIndex].status = .failed
                 messages[messageIndex].steps[stepIndex].output = event.payloadSummary
+                chatLog.notice("Step failed: tool=\(tool, privacy: .public) stepId=\(stepId, privacy: .public)")
+            } else {
+                chatLog.warning("Step failed but no matching running step (stepId=\(stepId, privacy: .public), tool=\(tool, privacy: .public))")
             }
         }
     }
@@ -344,13 +410,17 @@ class ChatViewModel {
     private func handleSessionEvent(_ event: JournalEvent, messageIndex: Int) {
         guard messageIndex < messages.count else { return }
 
+        NSLog("[Chat] handleSessionEvent: type=%@ session=%@ msgIndex=%d", event.type, event.sessionId, messageIndex)
+
         switch event.type {
         case "session.completed":
             completeMessage(at: messageIndex, event: event)
         case "session.failed":
+            chatLog.error("Session failed (via wrapper): \(event.payloadSummary ?? "?", privacy: .public)")
             messages[messageIndex].status = .failed
             messages[messageIndex].text = event.payloadSummary ?? "Session failed"
         case "session.aborted":
+            chatLog.notice("Session aborted (via wrapper)")
             messages[messageIndex].status = .failed
             messages[messageIndex].text = "Session was aborted"
         default:
@@ -365,8 +435,13 @@ class ChatViewModel {
     }
 
     private func completeMessage(at index: Int, event: JournalEvent) {
-        guard index < messages.count else { return }
+        guard index < messages.count else {
+            NSLog("[Chat] completeMessage — index %d out of bounds (count=%d)", index, messages.count)
+            return
+        }
 
+        let previousStatus = String(describing: messages[index].status)
+        NSLog("[Chat] completeMessage at index=%d, eventType=%@ previousStatus=%@", index, event.type, previousStatus)
         messages[index].status = .completed
 
         // 1. Check for top-level response text
@@ -374,12 +449,14 @@ class ChatViewModel {
                       event.payload?["result"]?.stringValue ??
                       event.payload?["message"]?.stringValue {
             messages[index].text = text
+            chatLog.notice("completeMessage — top-level text (\(text.count) chars), was \(previousStatus, privacy: .public)")
             return
         }
 
         // 2. Extract response from step_results (session.completed payload)
         if let responseText = extractResponseFromStepResults(event.payload) {
             messages[index].text = responseText
+            chatLog.notice("completeMessage — step_results text (\(responseText.count) chars), was \(previousStatus, privacy: .public)")
             return
         }
 
@@ -389,12 +466,16 @@ class ChatViewModel {
             .compactMap { $0.output }
         if !outputs.isEmpty {
             messages[index].text = outputs.joined(separator: "\n\n")
+            chatLog.notice("completeMessage — compiled from \(outputs.count) step outputs, was \(previousStatus, privacy: .public)")
             return
         }
 
         // 4. Fallback
         if messages[index].text.isEmpty {
+            chatLog.warning("completeMessage — no text found, falling back to 'Done.' (was \(previousStatus, privacy: .public), payload keys=\(event.payload?.keys.joined(separator: ",") ?? "nil", privacy: .public))")
             messages[index].text = "Done."
+        } else {
+            chatLog.notice("completeMessage — keeping existing text (\(self.messages[index].text.count) chars), was \(previousStatus, privacy: .public)")
         }
     }
 

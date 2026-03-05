@@ -36,9 +36,6 @@ struct ChatView: View {
             .onAppear {
                 viewModel.connect()
             }
-            .onDisappear {
-                viewModel.disconnect()
-            }
         }
     }
 
