@@ -35,15 +35,17 @@ class DashboardViewModel {
     /// Begins monitoring a session by connecting to its SSE event stream
     /// and updating the dashboard state in response to incoming events.
     @MainActor
-    func startMonitoring(sessionId: String) async {
+    func startMonitoring(session: Session) async {
         stopMonitoring()
         isLoading = true
         errorMessage = nil
 
-        // Fetch the initial session state
+        // Use the passed session directly (avoids 404 from getSession
+        // when the in-memory session manager no longer has the session).
+        currentSession = session
+
         do {
-            currentSession = try await client.getSession(id: sessionId)
-            events = try await client.getSessionJournal(id: sessionId)
+            events = try await client.getSessionJournal(id: session.id)
             isConnected = true
         } catch {
             errorMessage = error.localizedDescription
@@ -57,7 +59,7 @@ class DashboardViewModel {
         monitoringTask = Task { [weak self] in
             guard let self else { return }
 
-            let stream = self.sseClient.connect(sessionId: sessionId)
+            let stream = self.sseClient.connect(sessionId: session.id)
 
             for await event in stream {
                 guard !Task.isCancelled else { break }
@@ -87,7 +89,7 @@ class DashboardViewModel {
     func abortSession() async throws {
         guard let sessionId = currentSession?.id else { return }
         try await client.abortSession(id: sessionId)
-        currentSession = try await client.getSession(id: sessionId)
+        currentSession?.state = .aborted
     }
 
     /// Sends a recovery request for the currently monitored session.
@@ -95,7 +97,7 @@ class DashboardViewModel {
     func recoverSession() async throws {
         guard let sessionId = currentSession?.id else { return }
         try await client.recoverSession(id: sessionId)
-        currentSession = try await client.getSession(id: sessionId)
+        currentSession?.state = .running
     }
 
     // MARK: - Event Handling
@@ -104,17 +106,16 @@ class DashboardViewModel {
         switch event {
         case .sessionEvent(let journalEvent):
             events.append(journalEvent)
-            // Refresh session state on terminal events
+            // Update session state locally from terminal events
             if journalEvent.type == "session.completed" ||
                journalEvent.type == "session.failed" ||
                journalEvent.type == "session.aborted" {
                 isConnected = false
-                Task {
-                    currentSession = try? await client.getSession(id: journalEvent.sessionId)
-                }
-            } else {
-                Task {
-                    currentSession = try? await client.getSession(id: journalEvent.sessionId)
+                if var session = currentSession {
+                    session.state = SessionState(rawValue: journalEvent.type
+                        .replacingOccurrences(of: "session.", with: "")) ?? session.state
+                    session.updatedAt = journalEvent.timestamp
+                    currentSession = session
                 }
             }
 

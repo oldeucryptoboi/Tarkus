@@ -74,10 +74,10 @@ struct CreateSessionResponse: Codable {
 struct Session: Codable, Identifiable, Equatable {
     let id: String
     let task: String
-    let state: SessionState
+    var state: SessionState
     let mode: String?
     let createdAt: Date
-    let updatedAt: Date
+    var updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
         case sessionId = "session_id"

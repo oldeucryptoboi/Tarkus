@@ -48,6 +48,12 @@ struct SessionListView: View {
             .task {
                 await viewModel.loadSessions()
             }
+            .task(id: "poll") {
+                while !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 5_000_000_000)
+                    await viewModel.loadSessions()
+                }
+            }
             .overlay {
                 if viewModel.isLoading && viewModel.sessions.isEmpty {
                     ProgressView("Loading sessions...")

@@ -44,7 +44,10 @@ class SessionListViewModel {
         errorMessage = nil
 
         do {
-            sessions = try await client.listSessions()
+            // Filter out plugin registrations (non-UUID IDs, empty tasks, unknown status)
+            sessions = try await client.listSessions().filter { session in
+                !session.task.isEmpty && session.state != .unknown
+            }
         } catch {
             errorMessage = error.localizedDescription
         }

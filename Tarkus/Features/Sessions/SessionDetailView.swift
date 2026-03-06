@@ -142,7 +142,7 @@ struct SessionDetailView: View {
             let dashboardVM = DashboardViewModel(client: client, sseClient: sseClient)
             DashboardView(viewModel: dashboardVM)
                 .task {
-                    await dashboardVM.startMonitoring(sessionId: session.id)
+                    await dashboardVM.startMonitoring(session: session)
                 }
         } label: {
             Label("Monitor Live", systemImage: "waveform.path.ecg")
