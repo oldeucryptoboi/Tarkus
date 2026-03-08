@@ -14,6 +14,9 @@ struct ChatInputBar: View {
     // MARK: - State
 
     @FocusState private var isFocused: Bool
+    @State private var history: [String] = []
+    @State private var historyIndex: Int = -1
+    @State private var draft: String = ""
 
     // MARK: - Body
 
@@ -31,14 +34,34 @@ struct ChatInputBar: View {
                     .padding(10)
                     .background(Color.tertiaryGroupedBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .onSubmit {
-                        if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            onSend()
+                    .onKeyPress(.upArrow) {
+                        guard !history.isEmpty else { return .ignored }
+                        if historyIndex == -1 {
+                            draft = text
+                            historyIndex = history.count - 1
+                        } else if historyIndex > 0 {
+                            historyIndex -= 1
                         }
+                        text = history[historyIndex]
+                        return .handled
+                    }
+                    .onKeyPress(.downArrow) {
+                        guard historyIndex != -1 else { return .ignored }
+                        historyIndex += 1
+                        if historyIndex >= history.count {
+                            historyIndex = -1
+                            text = draft
+                        } else {
+                            text = history[historyIndex]
+                        }
+                        return .handled
+                    }
+                    .onSubmit {
+                        sendWithHistory()
                     }
 
                 // Send button
-                Button(action: onSend) {
+                Button(action: sendWithHistory) {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.title2)
                         .foregroundStyle(canSend ? Color.blue : Color.secondary)
@@ -53,6 +76,15 @@ struct ChatInputBar: View {
     }
 
     // MARK: - Computed
+
+    private func sendWithHistory() {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        history.append(trimmed)
+        historyIndex = -1
+        draft = ""
+        onSend()
+    }
 
     private var canSend: Bool {
         !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

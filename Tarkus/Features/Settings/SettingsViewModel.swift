@@ -33,7 +33,7 @@ class SettingsViewModel {
 
         do {
             let response = try await client.healthCheck()
-            isHealthy = response.status == "ok"
+            isHealthy = response.status == "ok" || response.status == "healthy"
             serverVersion = response.version
         } catch {
             isHealthy = false

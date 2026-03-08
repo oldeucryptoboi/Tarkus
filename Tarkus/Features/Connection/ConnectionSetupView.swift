@@ -10,6 +10,7 @@ struct ConnectionSetupView: View {
 
     @State private var viewModel = ConnectionViewModel()
     @Binding var isConnected: Bool
+    @Environment(\.dismiss) private var dismiss
 
     // MARK: - Body
 
@@ -71,7 +72,7 @@ struct ConnectionSetupView: View {
 
                 // Connection fields
                 Section("Server") {
-                    TextField("Host (e.g. 192.168.1.50)", text: $viewModel.host)
+                    TextField("Host", text: $viewModel.host)
                         .textContentType(.URL)
                         .autocorrectionDisabled()
                         #if os(iOS)
@@ -148,6 +149,15 @@ struct ConnectionSetupView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+            .padding(.trailing, 12)
+            .padding(.bottom, 12)
             .task {
                 viewModel.startDiscovery()
             }

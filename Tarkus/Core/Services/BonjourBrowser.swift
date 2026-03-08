@@ -102,7 +102,10 @@ class BonjourBrowser {
                     // (e.g. "Mac-mini.local") — resolvable via mDNS on iOS.
                     let hostString: String
                     if case .ipv4 = host {
-                        hostString = host.debugDescription
+                        // debugDescription may include a zone ID (e.g. "192.168.4.41%en0")
+                        // which is invalid in URLs — strip it.
+                        let raw = host.debugDescription
+                        hostString = raw.components(separatedBy: "%").first ?? raw
                     } else {
                         hostString = name
                     }
