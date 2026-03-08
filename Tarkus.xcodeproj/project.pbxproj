@@ -14,6 +14,7 @@
 		0BCAD229475E8A8620CA37FC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C48D185A9311A7E733F1B73 /* NotificationService.swift */; };
 		0DC7AF5B950FD7B553DCB32C /* MarkdownTextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38FC5724CC13F9F8269A494 /* MarkdownTextBlock.swift */; };
 		0FBE8ACCDFE9C8272B25AF5A /* NSView+PlaceholderAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400C3494D447A337FE2AF2EE /* NSView+PlaceholderAttachment.swift */; };
+		166EA99600F934B3F8FAAF0E /* gerty_confused.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CD83E7EF0503EFBDBA0A533 /* gerty_confused.jpg */; };
 		16BE9DB7C68F6A84D15F4A90 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65195A43E6B802CC9848E7C /* AnyCodable.swift */; };
 		173126444D7A5E9C732E3097 /* ToolSessionStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A3278D4DDA52F451AA314C /* ToolSessionStyle.swift */; };
 		18E1857521BA9AFA49F8461A /* NSTextAttachmentViewLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD86920AC2E16B42E61E1EF /* NSTextAttachmentViewLayoutProvider.swift */; };
@@ -41,8 +42,11 @@
 		4953B2E6E617CABAFCB33DD0 /* MetricsBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D15EE56524EED6B6A37764 /* MetricsBarView.swift */; };
 		4B532ACD337117620999F28D /* JournalEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709CE48EDD90864980CCAE06 /* JournalEvent.swift */; };
 		4BE274E759BD2098B5A33371 /* MarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D793C66BF53DAE0879922886 /* MarkdownTestView.swift */; };
+		4BEA05A98E4901A1A3463862 /* gerty_excited.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9891A5DF98879149FC6613AB /* gerty_excited.jpg */; };
+		4D84DF65241696B787A7253D /* gerty_sad.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D19D738CCBD8F655D2AC4368 /* gerty_sad.jpg */; };
 		5024DCCA11DB6FD2F50FD19E /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6EFF904EDC2CBF8601B7A7 /* ChatMessage.swift */; };
 		522E9D5765DB0EAA2AC40DAD /* MarkdownTextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5750EE8F89D06EFA97F054EB /* MarkdownTextRenderer.swift */; };
+		536DE122D1ABCFC86D452344 /* GERTYFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87EFC1E2A8717988EB64363 /* GERTYFaceView.swift */; };
 		55D6A74F1445187A58A3A82F /* MarkdownSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2E6AAAE3E831794208AA6A /* MarkdownSelection.swift */; };
 		568962528EB6B9DFE80D9635 /* MarkdownPostProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7074C15B8EFC00C6F367E1C1 /* MarkdownPostProcess.swift */; };
 		588DBAE9196B344EEE4707C7 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457BBA351EDBCBBEE251B6C6 /* AppRouter.swift */; };
@@ -66,6 +70,7 @@
 		7D55DEE8CE8F0BAC45EAB771 /* SSEEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F34427B5840208998A1E8E /* SSEEvent.swift */; };
 		7FE8FC73B3D031C202BA8F18 /* NewSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B9B60A9F8068A0710D064E /* NewSessionView.swift */; };
 		8117B214EAE69598B721BB24 /* HorizontallyScrollingMarkdownTextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B85E7BEEE8DE429B42BD8D1 /* HorizontallyScrollingMarkdownTextBlock.swift */; };
+		8713591ABF6BC07ABF16CBF2 /* gerty_anxious.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8C2601FDDFAE4ADC82ACE3D1 /* gerty_anxious.jpg */; };
 		87E44DDF648D4E9B953C79EE /* SSEClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AF3772D1B2BBE5F14A3A44 /* SSEClientTests.swift */; };
 		888CD1CBDB9EC154E88DBCFB /* SessionListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E85629486908FB5FBC995C6E /* SessionListViewModel.swift */; };
 		8A5286AFCA8DAD81ED37A027 /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06888DE767B2050657F1ABE /* ChatInputBar.swift */; };
@@ -81,7 +86,9 @@
 		9BF6E571752EF9A34E899C1A /* MarkdownCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426347D3D246D7C19FD7664D /* MarkdownCompiler.swift */; };
 		9E7B623D0881289F8E583B80 /* MarkdownMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25AD021875EEA2D93E0A5C82 /* MarkdownMenus.swift */; };
 		A05B853CB4BC41BC411D8656 /* SessionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035CCEE7B32CA429FFBB9F08 /* SessionHeaderView.swift */; };
+		A314BDFAAF6A466BCAAB1582 /* gerty_empathetic.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F0A62D3DB1739606C2B70138 /* gerty_empathetic.jpg */; };
 		A4A217AD791ABB4C38703CFA /* MarkdownImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A98A67E2FC09DCDB4161907 /* MarkdownImagePreview.swift */; };
+		AFA5207C3A987800315C6BE8 /* gerty_happy.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E9DB5FBD775427808E548C84 /* gerty_happy.jpg */; };
 		B37AC46264D0CAA335C2613D /* Highlightr in Frameworks */ = {isa = PBXBuildFile; productRef = 5DD647F1F3E486BDB0684CFC /* Highlightr */; };
 		B498C971C1B880B3472B674B /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = A6E4E5E550E587EF6C3B15A6 /* Markdown */; };
 		B6F9F166C577850D4851F11F /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134442F18EC7289E8F1CC7D9 /* KeychainService.swift */; };
@@ -95,6 +102,8 @@
 		D8FA52E8F5001C25A181CF2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4FF3EF18CD9A7F3153ADFA8 /* Assets.xcassets */; };
 		DD9B4E162A556FBD658C8A20 /* StepRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC41617F44DB5CE06C11E372 /* StepRowView.swift */; };
 		E107C985F263B2B1D0E8973F /* MarkdownTextBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E8B5073B1815CAEBF5665D4 /* MarkdownTextBlockView.swift */; };
+		E464F1AB4BE6652917AE782F /* gerty_concerned.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 25D0320614E64148D45FA40A /* gerty_concerned.jpg */; };
+		E5640743A0CCBC5A910B3926 /* gerty_neutral.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D52E28457A2F6DEFDACA1BEC /* gerty_neutral.jpg */; };
 		E8F744801351997FCAED8B21 /* ApprovalsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49499A6410DFE5A879565203 /* ApprovalsListView.swift */; };
 		EE07C6954C3B0E0AE7AF9C97 /* SessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8667ED0371CB9E3D569810EF /* SessionDetailView.swift */; };
 		EE8CE8F0A45EACDEFC5948F7 /* TarkusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD84F0A9A0071CB05B0317AA /* TarkusApp.swift */; };
@@ -128,6 +137,7 @@
 		1EA2314BCEBF40331117F623 /* CodeOnlyMarkdownCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeOnlyMarkdownCompiler.swift; sourceTree = "<group>"; };
 		22E3352B0DDDB36CD67D4366 /* ApprovalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalsViewModel.swift; sourceTree = "<group>"; };
 		25AD021875EEA2D93E0A5C82 /* MarkdownMenus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownMenus.swift; sourceTree = "<group>"; };
+		25D0320614E64148D45FA40A /* gerty_concerned.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_concerned.jpg; sourceTree = "<group>"; };
 		268B861ABB10FC4E4D3108D0 /* TypingDotPostProcessState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingDotPostProcessState.swift; sourceTree = "<group>"; };
 		26EC703D0F052968F33C8F66 /* MarkdownTableBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTableBlockView.swift; sourceTree = "<group>"; };
 		2770586206E1ADC3E1B9D540 /* HorizontallyScrollingMarkdownTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontallyScrollingMarkdownTextView.swift; sourceTree = "<group>"; };
@@ -165,13 +175,16 @@
 		79165F8790BBCF753E0B68D2 /* LatexMarkdownPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexMarkdownPreprocessor.swift; sourceTree = "<group>"; };
 		7A98A67E2FC09DCDB4161907 /* MarkdownImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownImagePreview.swift; sourceTree = "<group>"; };
 		7C4B9FC64D820259221F556D /* MarkdownPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPlugin.swift; sourceTree = "<group>"; };
+		7CD83E7EF0503EFBDBA0A533 /* gerty_confused.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_confused.jpg; sourceTree = "<group>"; };
 		7D6EFF904EDC2CBF8601B7A7 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		857821C5CF0EA5EADE0D5218 /* ConnectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionViewModel.swift; sourceTree = "<group>"; };
 		8667ED0371CB9E3D569810EF /* SessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailView.swift; sourceTree = "<group>"; };
 		8883C0CB7BB8EA48388E39BE /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		8A94C7E8B60CF41F4D1EF07C /* MarkdownContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownContent.swift; sourceTree = "<group>"; };
+		8C2601FDDFAE4ADC82ACE3D1 /* gerty_anxious.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_anxious.jpg; sourceTree = "<group>"; };
 		90A3278D4DDA52F451AA314C /* ToolSessionStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolSessionStyle.swift; sourceTree = "<group>"; };
 		9729988EB0ABDCBA02F54B31 /* LatexAnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAnalyticsEvent.swift; sourceTree = "<group>"; };
+		9891A5DF98879149FC6613AB /* gerty_excited.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_excited.jpg; sourceTree = "<group>"; };
 		9BCF2840B5A57D6E3513205D /* MarkdownOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownOptions.swift; sourceTree = "<group>"; };
 		9CD86920AC2E16B42E61E1EF /* NSTextAttachmentViewLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSTextAttachmentViewLayoutProvider.swift; sourceTree = "<group>"; };
 		9DF77AE7CC3D382321520BD1 /* Approval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Approval.swift; sourceTree = "<group>"; };
@@ -198,8 +211,11 @@
 		C82AC4ADDCE931AF999C08FD /* MarkdownPlugins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPlugins.swift; sourceTree = "<group>"; };
 		CB2E6AAAE3E831794208AA6A /* MarkdownSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownSelection.swift; sourceTree = "<group>"; };
 		CCD914C6B8BF55F8C278C3CB /* ImageGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneration.swift; sourceTree = "<group>"; };
+		D19D738CCBD8F655D2AC4368 /* gerty_sad.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_sad.jpg; sourceTree = "<group>"; };
+		D52E28457A2F6DEFDACA1BEC /* gerty_neutral.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_neutral.jpg; sourceTree = "<group>"; };
 		D67C21403C44C7C26D079C29 /* SessionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionListView.swift; sourceTree = "<group>"; };
 		D793C66BF53DAE0879922886 /* MarkdownTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTestView.swift; sourceTree = "<group>"; };
+		D87EFC1E2A8717988EB64363 /* GERTYFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GERTYFaceView.swift; sourceTree = "<group>"; };
 		D9F34427B5840208998A1E8E /* SSEEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEEvent.swift; sourceTree = "<group>"; };
 		DC5274D9F767DF5FE221D471 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		DCA0BD1F31BFDC32F5DB5413 /* MarkdownTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTable.swift; sourceTree = "<group>"; };
@@ -207,6 +223,8 @@
 		E38FC5724CC13F9F8269A494 /* MarkdownTextBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextBlock.swift; sourceTree = "<group>"; };
 		E5F101B69C6B6CC5ED824B2A /* xcode-light-custom.min.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "xcode-light-custom.min.css"; sourceTree = "<group>"; };
 		E85629486908FB5FBC995C6E /* SessionListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionListViewModel.swift; sourceTree = "<group>"; };
+		E9DB5FBD775427808E548C84 /* gerty_happy.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_happy.jpg; sourceTree = "<group>"; };
+		F0A62D3DB1739606C2B70138 /* gerty_empathetic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gerty_empathetic.jpg; sourceTree = "<group>"; };
 		F1B6C76ED55C20578686CF2B /* StepTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepTimelineView.swift; sourceTree = "<group>"; };
 		F3BFFDCEB017FFA40669C1D5 /* MarkdownCodeBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownCodeBlock.swift; sourceTree = "<group>"; };
 		F5242D4607A06C65A76EF631 /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
@@ -234,6 +252,7 @@
 				E06888DE767B2050657F1ABE /* ChatInputBar.swift */,
 				04C90EBBC2C80D1C40888FCF /* ChatView.swift */,
 				51031EC89725676756174CCA /* ChatViewModel.swift */,
+				D87EFC1E2A8717988EB64363 /* GERTYFaceView.swift */,
 				33AB72D4220C191B712DFBF1 /* MessageBubbleView.swift */,
 				3C4403AAA2D10F3C17CBDF5D /* Markdown */,
 			);
@@ -362,6 +381,7 @@
 			children = (
 				DC5274D9F767DF5FE221D471 /* AppIcon.icns */,
 				E5F101B69C6B6CC5ED824B2A /* xcode-light-custom.min.css */,
+				93929921ED56955ABD75F3D2 /* GERTYFaces */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -419,6 +439,21 @@
 				0FA5CB0FAB34654199EE7787 /* TarkusTests */,
 				7F98E67F1D087D7810DD61FE /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		93929921ED56955ABD75F3D2 /* GERTYFaces */ = {
+			isa = PBXGroup;
+			children = (
+				8C2601FDDFAE4ADC82ACE3D1 /* gerty_anxious.jpg */,
+				25D0320614E64148D45FA40A /* gerty_concerned.jpg */,
+				7CD83E7EF0503EFBDBA0A533 /* gerty_confused.jpg */,
+				F0A62D3DB1739606C2B70138 /* gerty_empathetic.jpg */,
+				9891A5DF98879149FC6613AB /* gerty_excited.jpg */,
+				E9DB5FBD775427808E548C84 /* gerty_happy.jpg */,
+				D52E28457A2F6DEFDACA1BEC /* gerty_neutral.jpg */,
+				D19D738CCBD8F655D2AC4368 /* gerty_sad.jpg */,
+			);
+			path = GERTYFaces;
 			sourceTree = "<group>";
 		};
 		AAA7FA7D8736F0BDC019D5D8 /* Settings */ = {
@@ -575,6 +610,14 @@
 			files = (
 				935DECE35A1395C498DABC8E /* AppIcon.icns in Resources */,
 				D8FA52E8F5001C25A181CF2C /* Assets.xcassets in Resources */,
+				8713591ABF6BC07ABF16CBF2 /* gerty_anxious.jpg in Resources */,
+				E464F1AB4BE6652917AE782F /* gerty_concerned.jpg in Resources */,
+				166EA99600F934B3F8FAAF0E /* gerty_confused.jpg in Resources */,
+				A314BDFAAF6A466BCAAB1582 /* gerty_empathetic.jpg in Resources */,
+				4BEA05A98E4901A1A3463862 /* gerty_excited.jpg in Resources */,
+				AFA5207C3A987800315C6BE8 /* gerty_happy.jpg in Resources */,
+				E5640743A0CCBC5A910B3926 /* gerty_neutral.jpg in Resources */,
+				4D84DF65241696B787A7253D /* gerty_sad.jpg in Resources */,
 				4171633B3A3185E2A4B7A03D /* xcode-light-custom.min.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -630,6 +673,7 @@
 				CF596B64C5FA29A3A359EBD2 /* DashboardView.swift in Sources */,
 				710F9840ABB0086B5BE003A5 /* DashboardViewModel.swift in Sources */,
 				454994886B5141A4DD7B400A /* ExclusiveSelectionManager.swift in Sources */,
+				536DE122D1ABCFC86D452344 /* GERTYFaceView.swift in Sources */,
 				5BD5B833C94DAE518DD39726 /* HTMLRepresentable.swift in Sources */,
 				2A6D59ACD9ED2E054393D3FF /* HighlightrCodeHighlighter.swift in Sources */,
 				8117B214EAE69598B721BB24 /* HorizontallyScrollingMarkdownTextBlock.swift in Sources */,

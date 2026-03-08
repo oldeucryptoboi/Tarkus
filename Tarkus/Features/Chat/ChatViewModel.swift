@@ -14,7 +14,7 @@ class ChatViewModel {
 
     var messages: [ChatMessage] = []
     var inputText: String = ""
-    var isConnected: Bool = false
+    var isConnected: Bool { webSocket.isConnected }
 
     private let webSocket: WebSocketClient
     private let client: KarnEvil9Client
@@ -59,12 +59,10 @@ class ChatViewModel {
                     NSLog("[Chat] streamTask — self nil or cancelled")
                     break
                 }
-                self.isConnected = self.webSocket.isConnected
                 self.handleWSMessage(message)
             }
             NSLog("[Chat] streamTask ended")
             guard let self else { return }
-            self.isConnected = false
             self.streamTask = nil
         }
     }
@@ -74,7 +72,6 @@ class ChatViewModel {
         streamTask?.cancel()
         streamTask = nil
         webSocket.disconnect()
-        isConnected = false
     }
 
     // MARK: - Sending
@@ -284,7 +281,7 @@ class ChatViewModel {
         let stepId = event.payload?["step_id"]?.stringValue ?? ""
         let tool = event.payload?["tool"]?.stringValue ?? "Unknown"
 
-        chatLog.notice("Step: \(type, privacy: .public) tool=\(tool, privacy: .public) stepId=\(stepId, privacy: .public) (msg status=\(String(describing: self.messages[messageIndex].status), privacy: .public))")
+        NSLog("[Chat] handleStepEvent: type=%@ tool=%@ stepId=%@ msgStatus=%@", type, tool, stepId, String(describing: messages[messageIndex].status))
 
         if type == "step.started" {
             let title = event.payload?["title"]?.stringValue ?? tool
@@ -310,12 +307,18 @@ class ChatViewModel {
 
                 // When the respond tool delivers text, transition to streaming
                 // so the user sees the response with a typing dot while the session finishes.
-                if tool == "respond", let text = output, !text.isEmpty,
+                let effectiveTool = messages[messageIndex].steps[stepIndex].tool
+                if effectiveTool == "respond", let text = output, !text.isEmpty,
                    messages[messageIndex].status == .thinking {
                     chatLog.notice("Respond tool delivered \(text.count) chars — transitioning to streaming")
                     messages[messageIndex].text = text
                     messages[messageIndex].status = .streaming
-                } else if tool == "respond" {
+                    // Extract mood from respond output
+                    if let outputDict = event.payload?["output"]?.dictionaryValue,
+                       let moodStr = outputDict["mood"]?.stringValue {
+                        messages[messageIndex].mood = GERTYMood(rawValue: moodStr)
+                    }
+                } else if effectiveTool == "respond" {
                     chatLog.warning("Respond tool completed but NO text extracted (output=\(output == nil ? "nil" : "empty", privacy: .public), status=\(String(describing: self.messages[messageIndex].status), privacy: .public))")
                 }
             } else {
@@ -428,6 +431,13 @@ class ChatViewModel {
         }
     }
 
+    // MARK: - Public Computed
+
+    /// The mood from the most recent assistant message that has one, or `nil`.
+    var lastMood: GERTYMood? {
+        messages.last(where: { $0.role == .assistant && $0.mood != nil })?.mood
+    }
+
     // MARK: - Helpers
 
     private func findAssistantMessage(for sessionId: String) -> Int? {
@@ -454,8 +464,12 @@ class ChatViewModel {
         }
 
         // 2. Extract response from step_results (session.completed payload)
-        if let responseText = extractResponseFromStepResults(event.payload) {
+        let (responseText, responseMood) = extractResponseFromStepResults(event.payload)
+        if let responseText {
             messages[index].text = responseText
+            if messages[index].mood == nil, let responseMood {
+                messages[index].mood = responseMood
+            }
             chatLog.notice("completeMessage — step_results text (\(responseText.count) chars), was \(previousStatus, privacy: .public)")
             return
         }
@@ -479,10 +493,10 @@ class ChatViewModel {
         }
     }
 
-    /// Extracts the response text from session.completed step_results payload.
+    /// Extracts the response text and mood from session.completed step_results payload.
     /// Looks for `respond` tool output first, then any step with a text field.
-    private func extractResponseFromStepResults(_ payload: [String: AnyCodable]?) -> String? {
-        guard let stepResults = payload?["step_results"]?.dictionaryValue else { return nil }
+    private func extractResponseFromStepResults(_ payload: [String: AnyCodable]?) -> (String?, GERTYMood?) {
+        guard let stepResults = payload?["step_results"]?.dictionaryValue else { return (nil, nil) }
 
         // Search all step results for output text
         // Prefer the `respond` tool's output
@@ -495,12 +509,13 @@ class ChatViewModel {
             if let text = output["text"]?.stringValue {
                 // Check if this is from the respond tool (has delivered field)
                 if output["delivered"] != nil {
-                    return text  // Respond tool — use immediately
+                    let mood = output["mood"]?.stringValue.flatMap { GERTYMood(rawValue: $0) }
+                    return (text, mood)  // Respond tool — use immediately
                 }
                 fallbackText = fallbackText ?? text
             }
         }
 
-        return fallbackText
+        return (fallbackText, nil)
     }
 }

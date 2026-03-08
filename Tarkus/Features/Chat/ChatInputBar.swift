@@ -9,7 +9,6 @@ struct ChatInputBar: View {
     // MARK: - Bindings
 
     @Binding var text: String
-    let isConnected: Bool
     let onSend: () -> Void
 
     // MARK: - State
@@ -23,12 +22,6 @@ struct ChatInputBar: View {
             Divider()
 
             HStack(alignment: .bottom, spacing: 8) {
-                // Connection indicator
-                Circle()
-                    .fill(isConnected ? Color.green : Color.red)
-                    .frame(width: 8, height: 8)
-                    .padding(.bottom, 12)
-
                 // Text field
                 TextField("Ask EDDIE...", text: $text, axis: .vertical)
                     .font(.system(size: 14))
@@ -73,7 +66,6 @@ struct ChatInputBar: View {
         Spacer()
         ChatInputBar(
             text: .constant(""),
-            isConnected: true,
             onSend: {}
         )
     }

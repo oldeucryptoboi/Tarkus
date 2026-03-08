@@ -269,7 +269,8 @@ struct ThinkingDotsView: View {
                     StepInfo(id: "1", stepId: "step-01", title: "Reading data", tool: "Read", status: .succeeded, output: "moltbook_posts.json"),
                     StepInfo(id: "2", stepId: "step-02", title: "Analyzing", tool: "Bash", status: .running, output: nil)
                 ],
-                approval: nil
+                approval: nil,
+                mood: nil
             ))
 
             MessageBubbleView(message: ChatMessage(
@@ -280,7 +281,8 @@ struct ThinkingDotsView: View {
                 sessionId: "s1",
                 status: .completed,
                 steps: [],
-                approval: nil
+                approval: nil,
+                mood: .happy
             ))
 
             MessageBubbleView(message: .system("Connected to EDDIE"))

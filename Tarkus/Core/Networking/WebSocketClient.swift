@@ -73,6 +73,12 @@ class WebSocketClient {
     /// Ping interval in seconds.
     private let pingInterval: TimeInterval = 30
 
+    /// If no pong received within this many seconds, mark as disconnected.
+    private let pongTimeout: TimeInterval = 45
+
+    /// Timestamp of the last pong received from the server.
+    private var lastPongReceived: Date = .distantPast
+
     /// Whether the client should attempt to reconnect on disconnection.
     private var shouldReconnect: Bool = false
 
@@ -187,6 +193,7 @@ class WebSocketClient {
         self.session = urlSession
         let task = urlSession.webSocketTask(with: request)
         self.webSocketTask = task
+        self.lastPongReceived = Date()
         task.resume()
 
         startReceiving()
@@ -261,9 +268,17 @@ class WebSocketClient {
         pingTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: UInt64((self?.pingInterval ?? 30) * 1_000_000_000))
-                self?.webSocketTask?.sendPing { error in
-                    if let error {
-                        wsLog.warning("Ping failed — \(error.localizedDescription, privacy: .public)")
+                guard let self, !Task.isCancelled else { break }
+
+                // Send app-level ping
+                self.send(.ping)
+
+                // Check if we've received a pong recently
+                let elapsed = Date().timeIntervalSince(self.lastPongReceived)
+                if elapsed > self.pongTimeout {
+                    wsLog.warning("No pong received in \(Int(elapsed))s — marking disconnected")
+                    await MainActor.run {
+                        self.isConnected = false
                     }
                 }
             }
@@ -281,8 +296,9 @@ class WebSocketClient {
             return .error(message: "Unable to parse WebSocket message")
         }
 
-        // Handle pong
+        // Handle pong — update last-seen timestamp
         if type == "pong" {
+            self.lastPongReceived = Date()
             return .pong
         }
 
@@ -302,6 +318,7 @@ class WebSocketClient {
 
         if let eventData = json["event"] as? [String: Any] {
             innerEventType = eventData["type"] as? String
+
             if let eventJson = try? JSONSerialization.data(withJSONObject: eventData),
                let parsed = try? JSONDecoder().decode(JournalEvent.self, from: eventJson) {
                 event = parsed

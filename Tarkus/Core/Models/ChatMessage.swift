@@ -13,6 +13,7 @@ struct ChatMessage: Identifiable {
     var status: Status
     var steps: [StepInfo]
     var approval: InlineApproval?
+    var mood: GERTYMood?
 
     // MARK: - Role
 
@@ -45,7 +46,8 @@ struct ChatMessage: Identifiable {
             sessionId: nil,
             status: .sending,
             steps: [],
-            approval: nil
+            approval: nil,
+            mood: nil
         )
     }
 
@@ -59,7 +61,8 @@ struct ChatMessage: Identifiable {
             sessionId: sessionId,
             status: .thinking,
             steps: [],
-            approval: nil
+            approval: nil,
+            mood: nil
         )
     }
 
@@ -73,7 +76,8 @@ struct ChatMessage: Identifiable {
             sessionId: nil,
             status: .completed,
             steps: [],
-            approval: nil
+            approval: nil,
+            mood: nil
         )
     }
 }

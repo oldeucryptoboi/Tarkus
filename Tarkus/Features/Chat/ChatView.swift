@@ -9,11 +9,12 @@ struct ChatView: View {
     // MARK: - State
 
     @State var viewModel: ChatViewModel
+    @State private var gertyPosition: CGPoint = CGPoint(x: 112, y: 88)
 
     // MARK: - Body
 
     var body: some View {
-        NavigationStack {
+        ZStack(alignment: .topLeading) {
             VStack(spacing: 0) {
                 if viewModel.messages.isEmpty {
                     emptyState
@@ -23,43 +24,42 @@ struct ChatView: View {
 
                 ChatInputBar(
                     text: $viewModel.inputText,
-                    isConnected: viewModel.isConnected,
                     onSend: {
                         viewModel.sendMessage()
                     }
                 )
             }
-            .navigationTitle("EDDIE")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .onAppear {
-                viewModel.connect()
-            }
+
+            // GERTY face — draggable floating window
+            GERTYFaceView(mood: viewModel.lastMood ?? .neutral, width: 192, height: 144)
+                .brightness(viewModel.isConnected ? 0 : -1)
+                .opacity(viewModel.isConnected ? (viewModel.lastMood != nil ? 1.0 : 0.4) : 1.0)
+                .shadow(color: .black.opacity(0.3), radius: 6, y: 3)
+                .animation(.easeInOut(duration: 0.5), value: viewModel.isConnected)
+                .position(gertyPosition)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            gertyPosition = value.location
+                        }
+                )
+        }
+        .onAppear {
+            viewModel.connect()
         }
     }
 
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Spacer()
-
-            Image(systemName: "brain.head.profile")
-                .font(.system(size: 56))
-                .foregroundStyle(.purple.opacity(0.6))
-
+        VStack(spacing: 4) {
             Text("What can I help you with?")
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(.primary)
 
-            Text("Ask EDDIE anything. I can manage tasks, check on your projects, and more.")
+            Text("Ask EDDIE anything.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-
-            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

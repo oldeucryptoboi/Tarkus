@@ -45,9 +45,15 @@ class SessionListViewModel {
 
         do {
             // Filter out plugin registrations (non-UUID IDs, empty tasks, unknown status)
-            sessions = try await client.listSessions().filter { session in
-                !session.task.isEmpty && session.state != .unknown
-            }
+            sessions = try await client.listSessions()
+                .filter { !$0.task.isEmpty && $0.state != .unknown }
+                .sorted {
+                    // Active sessions first, then by most recently updated
+                    if $0.state.isActive != $1.state.isActive {
+                        return $0.state.isActive
+                    }
+                    return $0.updatedAt > $1.updatedAt
+                }
         } catch {
             errorMessage = error.localizedDescription
         }
