@@ -45,7 +45,7 @@ struct SettingsView: View {
             HStack {
                 Label {
                     VStack(alignment: .leading) {
-                        Text("\(viewModel.client.serverConfig.host):\(viewModel.client.serverConfig.port)")
+                        Text(verbatim: "\(viewModel.client.serverConfig.host):\(viewModel.client.serverConfig.port)")
                             .font(.body)
                         Text("Server Address")
                             .font(.caption)
